@@ -1,0 +1,40 @@
+:root {
+  /* colors */
+  --paper: #F5F1E8;
+  --paper-warm: #EDE6D6;
+  --ink: #1F1B16;
+  --ink-soft: #4A423A;
+  --ink-mute: #8C8279;
+  --seal: #A8321E;
+  --gold: #B8945F;
+  --line: rgba(31, 27, 22, 0.12);
+
+  /* fonts */
+  --font-kai: "LXGW WenKai", "Kaiti SC", "STKaiti", serif;
+  --font-serif-cn: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-en: "Cormorant Garamond", "Times New Roman", serif;
+
+  /* breakpoints (use in media queries directly; vars kept for docs) */
+  --bp-sm: 640px;
+  --bp-md: 900px;
+  --bp-lg: 1280px;
+
+  /* spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+
+  /* typography */
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.9375rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.75rem;
+  --fs-2xl: 2.5rem;
+  --fs-3xl: 3.5rem;
+  --lh-tight: 1.25;
+  --lh-base: 1.75;
+}
