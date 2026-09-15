@@ -1,0 +1,246 @@
+{
+  "items": [
+    {
+      "id": "5b89a7c689918f17caffac3ae4336f67",
+      "src": "assets/images/event/5b89a7c689918f17caffac3ae4336f67.webp",
+      "srcset": "assets/images/event/5b89a7c689918f17caffac3ae4336f67-thumb.webp 800w, assets/images/event/5b89a7c689918f17caffac3ae4336f67.webp 2000w",
+      "fallback": "assets/images/event/5b89a7c689918f17caffac3ae4336f67.jpg",
+      "thumb": "assets/images/event/5b89a7c689918f17caffac3ae4336f67-thumb.webp",
+      "width": 640,
+      "height": 580,
+      "alt": "活动摄影 作品 1",
+      "category": "企业活动"
+    },
+    {
+      "id": "CLL_2044-opq3059444369",
+      "src": "assets/images/event/CLL_2044-opq3059444369.webp",
+      "srcset": "assets/images/event/CLL_2044-opq3059444369-thumb.webp 800w, assets/images/event/CLL_2044-opq3059444369.webp 2000w, assets/images/event/CLL_2044-opq3059444369@2x.webp 2800w",
+      "fallback": "assets/images/event/CLL_2044-opq3059444369.jpg",
+      "thumb": "assets/images/event/CLL_2044-opq3059444369-thumb.webp",
+      "width": 2000,
+      "height": 1334,
+      "alt": "活动摄影 作品 2",
+      "category": "年会"
+    },
+    {
+      "id": "CLL_2079-opq3059339407",
+      "src": "assets/images/event/CLL_2079-opq3059339407.webp",
+      "srcset": "assets/images/event/CLL_2079-opq3059339407-thumb.webp 800w, assets/images/event/CLL_2079-opq3059339407.webp 2000w, assets/images/event/CLL_2079-opq3059339407@2x.webp 2800w",
+      "fallback": "assets/images/event/CLL_2079-opq3059339407.jpg",
+      "thumb": "assets/images/event/CLL_2079-opq3059339407-thumb.webp",
+      "width": 1333,
+      "height": 2000,
+      "alt": "活动摄影 作品 3",
+      "category": "发布会"
+    },
+    {
+      "id": "CLL_2092-opq3059299694",
+      "src": "assets/images/event/CLL_2092-opq3059299694.webp",
+      "srcset": "assets/images/event/CLL_2092-opq3059299694-thumb.webp 800w, assets/images/event/CLL_2092-opq3059299694.webp 2000w, assets/images/event/CLL_2092-opq3059299694@2x.webp 2800w",
+      "fallback": "assets/images/event/CLL_2092-opq3059299694.jpg",
+      "thumb": "assets/images/event/CLL_2092-opq3059299694-thumb.webp",
+      "width": 2000,
+      "height": 1334,
+      "alt": "活动摄影 作品 4",
+      "category": "路演"
+    },
+    {
+      "id": "CLL_2368",
+      "src": "assets/images/event/CLL_2368.webp",
+      "srcset": "assets/images/event/CLL_2368-thumb.webp 800w, assets/images/event/CLL_2368.webp 2000w, assets/images/event/CLL_2368@2x.webp 2800w",
+      "fallback": "assets/images/event/CLL_2368.jpg",
+      "thumb": "assets/images/event/CLL_2368-thumb.webp",
+      "width": 1322,
+      "height": 2000,
+      "alt": "活动摄影 作品 5",
+      "category": "展会"
+    },
+    {
+      "id": "HXX_8044",
+      "src": "assets/images/event/HXX_8044.webp",
+      "srcset": "assets/images/event/HXX_8044-thumb.webp 800w, assets/images/event/HXX_8044.webp 2000w, assets/images/event/HXX_8044@2x.webp 2800w",
+      "fallback": "assets/images/event/HXX_8044.jpg",
+      "thumb": "assets/images/event/HXX_8044-thumb.webp",
+      "width": 2000,
+      "height": 1333,
+      "alt": "活动摄影 作品 6",
+      "category": "企业活动"
+    },
+    {
+      "id": "HXX_8054",
+      "src": "assets/images/event/HXX_8054.webp",
+      "srcset": "assets/images/event/HXX_8054-thumb.webp 800w, assets/images/event/HXX_8054.webp 2000w, assets/images/event/HXX_8054@2x.webp 2800w",
+      "fallback": "assets/images/event/HXX_8054.jpg",
+      "thumb": "assets/images/event/HXX_8054-thumb.webp",
+      "width": 2000,
+      "height": 1333,
+      "alt": "活动摄影 作品 7",
+      "category": "年会"
+    },
+    {
+      "id": "HXX_8062",
+      "src": "assets/images/event/HXX_8062.webp",
+      "srcset": "assets/images/event/HXX_8062-thumb.webp 800w, assets/images/event/HXX_8062.webp 2000w, assets/images/event/HXX_8062@2x.webp 2800w",
+      "fallback": "assets/images/event/HXX_8062.jpg",
+      "thumb": "assets/images/event/HXX_8062-thumb.webp",
+      "width": 2000,
+      "height": 1333,
+      "alt": "活动摄影 作品 8",
+      "category": "发布会"
+    },
+    {
+      "id": "HXX_8186",
+      "src": "assets/images/event/HXX_8186.webp",
+      "srcset": "assets/images/event/HXX_8186-thumb.webp 800w, assets/images/event/HXX_8186.webp 2000w, assets/images/event/HXX_8186@2x.webp 2800w",
+      "fallback": "assets/images/event/HXX_8186.jpg",
+      "thumb": "assets/images/event/HXX_8186-thumb.webp",
+      "width": 2000,
+      "height": 1331,
+      "alt": "活动摄影 作品 9",
+      "category": "路演"
+    },
+    {
+      "id": "HXX_8253",
+      "src": "assets/images/event/HXX_8253.webp",
+      "srcset": "assets/images/event/HXX_8253-thumb.webp 800w, assets/images/event/HXX_8253.webp 2000w, assets/images/event/HXX_8253@2x.webp 2800w",
+      "fallback": "assets/images/event/HXX_8253.jpg",
+      "thumb": "assets/images/event/HXX_8253-thumb.webp",
+      "width": 2000,
+      "height": 1332,
+      "alt": "活动摄影 作品 10",
+      "category": "展会"
+    },
+    {
+      "id": "HXX_8267",
+      "src": "assets/images/event/HXX_8267.webp",
+      "srcset": "assets/images/event/HXX_8267-thumb.webp 800w, assets/images/event/HXX_8267.webp 2000w, assets/images/event/HXX_8267@2x.webp 2800w",
+      "fallback": "assets/images/event/HXX_8267.jpg",
+      "thumb": "assets/images/event/HXX_8267-thumb.webp",
+      "width": 2000,
+      "height": 1332,
+      "alt": "活动摄影 作品 11",
+      "category": "企业活动"
+    },
+    {
+      "id": "HXX_8268",
+      "src": "assets/images/event/HXX_8268.webp",
+      "srcset": "assets/images/event/HXX_8268-thumb.webp 800w, assets/images/event/HXX_8268.webp 2000w, assets/images/event/HXX_8268@2x.webp 2800w",
+      "fallback": "assets/images/event/HXX_8268.jpg",
+      "thumb": "assets/images/event/HXX_8268-thumb.webp",
+      "width": 2000,
+      "height": 1341,
+      "alt": "活动摄影 作品 12",
+      "category": "年会"
+    },
+    {
+      "id": "HXX_8286-opq3059529677",
+      "src": "assets/images/event/HXX_8286-opq3059529677.webp",
+      "srcset": "assets/images/event/HXX_8286-opq3059529677-thumb.webp 800w, assets/images/event/HXX_8286-opq3059529677.webp 2000w, assets/images/event/HXX_8286-opq3059529677@2x.webp 2800w",
+      "fallback": "assets/images/event/HXX_8286-opq3059529677.jpg",
+      "thumb": "assets/images/event/HXX_8286-opq3059529677-thumb.webp",
+      "width": 2000,
+      "height": 1342,
+      "alt": "活动摄影 作品 13",
+      "category": "发布会"
+    },
+    {
+      "id": "MPCA5415-opq3059327729",
+      "src": "assets/images/event/MPCA5415-opq3059327729.webp",
+      "srcset": "assets/images/event/MPCA5415-opq3059327729-thumb.webp 800w, assets/images/event/MPCA5415-opq3059327729.webp 2000w, assets/images/event/MPCA5415-opq3059327729@2x.webp 2800w",
+      "fallback": "assets/images/event/MPCA5415-opq3059327729.jpg",
+      "thumb": "assets/images/event/MPCA5415-opq3059327729-thumb.webp",
+      "width": 2000,
+      "height": 1332,
+      "alt": "活动摄影 作品 14",
+      "category": "路演"
+    },
+    {
+      "id": "MPCA5481-opq3059307815",
+      "src": "assets/images/event/MPCA5481-opq3059307815.webp",
+      "srcset": "assets/images/event/MPCA5481-opq3059307815-thumb.webp 800w, assets/images/event/MPCA5481-opq3059307815.webp 2000w, assets/images/event/MPCA5481-opq3059307815@2x.webp 2800w",
+      "fallback": "assets/images/event/MPCA5481-opq3059307815.jpg",
+      "thumb": "assets/images/event/MPCA5481-opq3059307815-thumb.webp",
+      "width": 2000,
+      "height": 1333,
+      "alt": "活动摄影 作品 15",
+      "category": "展会"
+    },
+    {
+      "id": "MPCA5817-opq3059370415",
+      "src": "assets/images/event/MPCA5817-opq3059370415.webp",
+      "srcset": "assets/images/event/MPCA5817-opq3059370415-thumb.webp 800w, assets/images/event/MPCA5817-opq3059370415.webp 2000w, assets/images/event/MPCA5817-opq3059370415@2x.webp 2800w",
+      "fallback": "assets/images/event/MPCA5817-opq3059370415.jpg",
+      "thumb": "assets/images/event/MPCA5817-opq3059370415-thumb.webp",
+      "width": 2000,
+      "height": 1334,
+      "alt": "活动摄影 作品 16",
+      "category": "企业活动"
+    },
+    {
+      "id": "MPCA5833-opq3059372757",
+      "src": "assets/images/event/MPCA5833-opq3059372757.webp",
+      "srcset": "assets/images/event/MPCA5833-opq3059372757-thumb.webp 800w, assets/images/event/MPCA5833-opq3059372757.webp 2000w, assets/images/event/MPCA5833-opq3059372757@2x.webp 2800w",
+      "fallback": "assets/images/event/MPCA5833-opq3059372757.jpg",
+      "thumb": "assets/images/event/MPCA5833-opq3059372757-thumb.webp",
+      "width": 2000,
+      "height": 1332,
+      "alt": "活动摄影 作品 17",
+      "category": "年会"
+    },
+    {
+      "id": "MPCA6018-opq3059416292",
+      "src": "assets/images/event/MPCA6018-opq3059416292.webp",
+      "srcset": "assets/images/event/MPCA6018-opq3059416292-thumb.webp 800w, assets/images/event/MPCA6018-opq3059416292.webp 2000w, assets/images/event/MPCA6018-opq3059416292@2x.webp 2800w",
+      "fallback": "assets/images/event/MPCA6018-opq3059416292.jpg",
+      "thumb": "assets/images/event/MPCA6018-opq3059416292-thumb.webp",
+      "width": 2000,
+      "height": 1331,
+      "alt": "活动摄影 作品 18",
+      "category": "发布会"
+    },
+    {
+      "id": "MPCA6099-opq3059484412",
+      "src": "assets/images/event/MPCA6099-opq3059484412.webp",
+      "srcset": "assets/images/event/MPCA6099-opq3059484412-thumb.webp 800w, assets/images/event/MPCA6099-opq3059484412.webp 2000w, assets/images/event/MPCA6099-opq3059484412@2x.webp 2800w",
+      "fallback": "assets/images/event/MPCA6099-opq3059484412.jpg",
+      "thumb": "assets/images/event/MPCA6099-opq3059484412-thumb.webp",
+      "width": 2000,
+      "height": 1332,
+      "alt": "活动摄影 作品 19",
+      "category": "路演"
+    },
+    {
+      "id": "image",
+      "src": "assets/images/event/image.webp",
+      "srcset": "assets/images/event/image-thumb.webp 800w, assets/images/event/image.webp 2000w",
+      "fallback": "assets/images/event/image.jpg",
+      "thumb": "assets/images/event/image-thumb.webp",
+      "width": 311,
+      "height": 260,
+      "alt": "活动摄影 作品 20",
+      "category": "展会"
+    },
+    {
+      "id": "is7zMAyj",
+      "src": "assets/images/event/is7zMAyj.webp",
+      "srcset": "assets/images/event/is7zMAyj-thumb.webp 800w, assets/images/event/is7zMAyj.webp 2000w",
+      "fallback": "assets/images/event/is7zMAyj.jpg",
+      "thumb": "assets/images/event/is7zMAyj-thumb.webp",
+      "width": 1080,
+      "height": 1541,
+      "alt": "活动摄影 作品 21",
+      "category": "企业活动"
+    },
+    {
+      "id": "skZ3xi0J",
+      "src": "assets/images/event/skZ3xi0J.webp",
+      "srcset": "assets/images/event/skZ3xi0J-thumb.webp 800w, assets/images/event/skZ3xi0J.webp 2000w",
+      "fallback": "assets/images/event/skZ3xi0J.jpg",
+      "thumb": "assets/images/event/skZ3xi0J-thumb.webp",
+      "width": 1080,
+      "height": 615,
+      "alt": "活动摄影 作品 22",
+      "category": "年会"
+    }
+  ]
+}
