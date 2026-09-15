@@ -18,15 +18,16 @@ const CATEGORY_MAP = [
 ];
 
 const WEDDING_SUBCATEGORY = {
-  // 婚礼摄影 md 中两个小节，按文件出现顺序前 14 张为领证，后续为婚礼
-  // 此处简化：从原 md 解析过于复杂，改为：默认全部 "婚礼"，文件名含 "2026-05-31" 或 "0da947" "311b53" 等已知前缀的为 "领证"。
-  // 实际执行者按 spec 第 6 节 "wedding 分类规则" 维护此 Set。
+  // 4.婚礼摄影/婚礼摄影.md 的 领证跟拍 小节含 26 张（8 哈希 + 7 时间戳 + 11 image*.png）：下方 Set 枚举哈希与 image* 词干，2026-05-31 前缀规则覆盖时间戳。
 };
 const LICENCE_FILES = new Set([
   '0da947d78e46dd64c8babfbc58185984','311b53ebbeffb424c159c22fcf3a72ea',
   '2520622fa352b2aec215a76bb0794a64','52e2115542ce62b38adbc6f81972ceff',
   '17393944f15a83412f26c4a714b96fb4','16a5754871217186d25c1eaffaf8df72',
   '36c965cb001cecccae21be4dc2537acd','b6d121b4a69f3a71ef6561e2cfedf78b',
+  // image*.png 属 领证跟拍；image-1/-5/-11 属 婚礼跟拍，故意排除
+  'image','image-2','image-3','image-4','image-6','image-7',
+  'image-8','image-9','image-10','image-12','image-13',
 ]);
 // 时间戳前缀 "2026-05-31" 也归入领证
 function weddingCategory(stem) {
