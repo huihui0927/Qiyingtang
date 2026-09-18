@@ -12,9 +12,17 @@
   color: var(--paper);
 }
 .hero-media { position: absolute; inset: 0; }
-.hero-photo {
+.hero-slides { position: absolute; inset: 0; }
+.hero-slide {
+  position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
+  opacity: 0;
+  transform: scale(1);
+  transition: opacity 1.6s ease;
+}
+.hero-slide.is-active {
+  opacity: 1;
   transform-origin: center;
 }
 .hero-shade {
@@ -85,6 +93,24 @@
   width: 1px; height: 2.75rem;
   background: linear-gradient(to bottom, rgba(245, 241, 232, 0.8), transparent);
 }
+
+/* 轮播圆点 */
+.hero-dots {
+  position: absolute; bottom: var(--space-4); left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex; gap: .75rem;
+}
+.hero-dot {
+  width: 8px; height: 8px; padding: 0;
+  border: 1px solid rgba(245, 241, 232, 0.85);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: background .3s, transform .3s;
+}
+.hero-dot:hover { transform: scale(1.25); }
+.hero-dot[aria-selected="true"] { background: var(--paper); border-color: var(--paper); }
 
 /* ── Bento Gallery ─────────────────────────────────────── */
 .bento {
@@ -355,8 +381,14 @@
   .hero-cta { animation-delay: 0.9s; }
   .hero-cue { animation-delay: 1.4s; }
   .hero-cue::after { transform-origin: top; animation: cue-draw 2.6s ease-in-out 2s infinite; }
-  .hero-photo { animation: breathe 20s ease-in-out infinite alternate; }
+  .hero-slide { transition: none; }
+  .hero-slide.is-active { animation: slide-breathe 7.5s ease both; }
   .story-feature-media img { animation: settle 1.2s ease both; }
+}
+@keyframes slide-breathe {
+  from { opacity: 0; transform: scale(1); }
+  22% { opacity: 1; }
+  to { opacity: 1; transform: scale(1.05); }
 }
 @keyframes ink-rise {
   from { opacity: 0; transform: translateY(24px); }
@@ -367,10 +399,6 @@
   35% { transform: scaleY(1); opacity: 1; }
   75% { transform: scaleY(1); opacity: 0; }
   100% { transform: scaleY(0); opacity: 0; }
-}
-@keyframes breathe {
-  from { transform: scale(1); }
-  to { transform: scale(1.05); }
 }
 @keyframes settle {
   from { opacity: 0; transform: scale(1.05); }

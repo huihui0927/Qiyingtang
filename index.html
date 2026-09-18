@@ -10,7 +10,13 @@
 <main>
   <section class="hero">
     <div class="hero-media" aria-hidden="true">
-      <img class="hero-photo" src="assets/images/wedding/0da947d78e46dd64c8babfbc58185984.webp" alt="" width="2000" height="1333" fetchpriority="high">
+      <div class="hero-slides" data-carousel>
+        <img class="hero-slide is-active" src="assets/images/home/hero-1.webp" alt="" width="1920" height="1200" fetchpriority="high">
+        <img class="hero-slide" src="assets/images/home/hero-2.webp" alt="" width="2000" height="1125" loading="lazy">
+        <img class="hero-slide" src="assets/images/home/hero-3.webp" alt="" width="1417" height="770" loading="lazy">
+        <img class="hero-slide" src="assets/images/home/hero-4.webp" alt="" width="1620" height="1080" loading="lazy">
+        <img class="hero-slide" src="assets/images/home/hero-5.webp" alt="" width="1620" height="1080" loading="lazy">
+      </div>
       <div class="hero-shade"></div>
     </div>
     <div class="hero-inner container">
@@ -27,6 +33,7 @@
       </p>
     </div>
     <a class="hero-cue" href="#works" aria-label="向下浏览内容">展卷</a>
+    <div class="hero-dots" data-carousel-dots role="tablist" aria-label="切换首屏照片"></div>
   </section>
 
   <section class="container works" id="works" data-reveal>
@@ -132,7 +139,9 @@
 <script type="module">
   import { initReveal } from './assets/js/reveal.js';
   import { openLightbox } from './assets/js/lightbox.js';
+  import { initCarousel } from './assets/js/carousel.js';
   initReveal();
+  initCarousel(document.querySelector('[data-carousel]'), document.querySelector('[data-carousel-dots]'));
 
   const bentoItems = [
     {
