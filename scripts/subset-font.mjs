@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// Prerequisites: Python 3.10+ with fonttools and brotli installed
+// Install with: pip install fonttools brotli
 import { readFile, writeFile, mkdir, stat, copyFile, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
