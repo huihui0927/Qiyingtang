@@ -19,9 +19,10 @@
 .footer-inner { text-align: center; display: grid; gap: var(--space-2); }
 .footer-slogan { font-family: var(--font-kai); color: var(--ink-soft); font-size: var(--fs-lg); margin: 0; }
 .footer-contact, .footer-copy { color: var(--ink-mute); font-size: var(--fs-sm); margin: 0; }
-main { min-height: 60vh; padding-block: var(--space-5); }
+main { min-height: 60vh; padding-block: var(--space-5); background: radial-gradient(56rem 28rem at 50% -6rem, rgba(184, 148, 95, 0.07), transparent 70%); }
 section + section { margin-top: var(--space-6); }
-.section-title { display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-4); }
+.section-title { display: grid; gap: 0.3rem; margin-bottom: var(--space-5); }
+.section-title .en { font-family: var(--font-en); font-size: var(--fs-sm); letter-spacing: .3em; text-transform: uppercase; color: var(--ink-mute); order: -1; }
 .section-title h2 { margin: 0; }
-.section-title .en { font-family: var(--font-en); color: var(--ink-mute); font-style: italic; }
+.section-title::after { content: ""; width: 2.5rem; height: 1px; background: var(--line-gold); margin-top: var(--space-2); }
 .seal { display: inline-block; width: 1.2em; height: 1.2em; background: var(--seal); color: var(--paper); font-family: var(--font-kai); text-align: center; line-height: 1.2em; border-radius: 2px; font-size: 0.85em; }

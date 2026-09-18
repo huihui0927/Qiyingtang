@@ -1,24 +1,127 @@
-.hero { text-align: center; padding-block: var(--space-6) var(--space-5); display: grid; gap: var(--space-3); justify-items: center; min-height: 70vh; }
-.hero-seal img { width: 64px; height: 64px; }
-.hero-eyebrow { font-family: var(--font-en); letter-spacing: .25em; text-transform: uppercase; color: var(--ink-mute); font-size: var(--fs-sm); margin: 0; }
-.hero-title { font-family: var(--font-kai); font-size: clamp(2.5rem, 7vw, 4.5rem); line-height: 1.15; margin: 0; letter-spacing: .04em; }
-.hero-sub { color: var(--ink-soft); font-size: var(--fs-lg); margin: 0; }
-.hero-cta { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; margin-top: var(--space-3); }
+/* ── Hero: 立轴 hanging scroll ─────────────────────────────
+   The page opens as a mounted scroll: a hanging cord descends
+   to the seal, the seal stamps in, title lines rise like ink. */
+.hero {
+  position: relative;
+  text-align: center;
+  padding-block: var(--space-6) 6rem;
+  display: grid;
+  gap: var(--space-3);
+  justify-items: center;
+  min-height: 82vh;
+}
 
+/* hanging cord above the seal */
+.hero-seal { position: relative; padding-top: 3.5rem; }
+.hero-seal::before {
+  content: "";
+  position: absolute; top: 0; left: 50%;
+  width: 1px; height: 3.5rem;
+  background: linear-gradient(to bottom, transparent, var(--line-gold));
+}
+.hero-seal img {
+  width: 84px; height: 84px;
+  filter: drop-shadow(0 2px 3px rgba(31, 27, 22, 0.18));
+}
+
+.hero-eyebrow {
+  font-family: var(--font-en);
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-size: var(--fs-sm);
+  margin: 0;
+}
+.hero-title {
+  font-family: var(--font-kai);
+  font-size: clamp(2.75rem, 8vw, 4.75rem);
+  line-height: 1.4;
+  margin: var(--space-2) 0 0;
+  letter-spacing: .14em;
+  text-indent: .14em; /* balance trailing letter-spacing on centered CJK */
+}
+.hero-sub { color: var(--ink-soft); font-size: var(--fs-lg); margin: 0; letter-spacing: .06em; }
+.hero-cta { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; margin-top: var(--space-4); }
+
+/* 展卷 scroll cue */
+.hero-cue {
+  position: absolute; bottom: var(--space-4); left: 50%;
+  transform: translateX(-50%);
+  display: grid; justify-items: center; gap: var(--space-2);
+  border: 0;
+  color: var(--ink-mute);
+  font-family: var(--font-kai);
+  font-size: var(--fs-xs);
+  letter-spacing: .5em; text-indent: .5em;
+}
+.hero-cue:hover { color: var(--seal); }
+.hero-cue::after {
+  content: "";
+  width: 1px; height: 2.75rem;
+  background: linear-gradient(to bottom, var(--line-gold), transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-seal { animation: seal-stamp 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+  .hero-eyebrow, .hero-title, .hero-sub, .hero-cta { animation: ink-rise 0.9s ease both; }
+  .hero-eyebrow { animation-delay: 0.15s; }
+  .hero-title { animation-delay: 0.3s; }
+  .hero-sub { animation-delay: 0.5s; }
+  .hero-cta { animation-delay: 0.65s; }
+  .hero-cue { animation: ink-rise 0.9s ease 1s both; }
+  .hero-cue::after { transform-origin: top; animation: cue-draw 2.6s ease-in-out 1.6s infinite; }
+}
+@keyframes seal-stamp {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes ink-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cue-draw {
+  0% { transform: scaleY(0); opacity: 0; }
+  35% { transform: scaleY(1); opacity: 1; }
+  75% { transform: scaleY(1); opacity: 0; }
+  100% { transform: scaleY(0); opacity: 0; }
+}
+
+/* ── Services ─────────────────────────────────────────── */
 .services-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-.service-card { background: var(--paper-warm); padding: 0; border: 1px solid var(--line); border-radius: 2px; overflow: hidden; display: flex; flex-direction: column; }
-.service-thumb { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.service-card {
+  background: var(--paper-warm); padding: 0;
+  border: 1px solid var(--line); border-radius: 2px;
+  overflow: hidden; display: flex; flex-direction: column;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.service-card:hover { transform: translateY(-4px); box-shadow: 0 10px 26px rgba(31, 27, 22, 0.09); }
+.service-thumb { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; transition: transform 0.7s ease; }
+.service-card:hover .service-thumb { transform: scale(1.04); }
 .service-card h3 { margin: var(--space-3) var(--space-3) var(--space-2); font-family: var(--font-kai); font-size: var(--fs-lg); }
 .service-card p { margin: 0 var(--space-3) var(--space-3); color: var(--ink-soft); font-size: var(--fs-sm); flex: 1; }
-.service-card a { display: block; padding: var(--space-2) var(--space-3); border-top: 1px solid var(--line); font-size: var(--fs-sm); color: var(--seal); text-decoration: none; text-align: center; transition: background .2s; }
+.service-card a { display: block; padding: var(--space-2) var(--space-3); border-top: 1px solid var(--line); font-size: var(--fs-sm); color: var(--seal); text-decoration: none; text-align: center; transition: background 0.25s; }
 .service-card a:hover { background: var(--paper); }
 
+/* ── About ─────────────────────────────────────────────── */
 .about-content { max-width: 60ch; margin: 0 auto; text-align: center; }
-.about-content p { color: var(--ink-soft); font-size: var(--fs-base); line-height: var(--lh-base); margin-bottom: var(--space-3); }
-.about-content .seal { font-size: var(--fs-2xl); }
+.about-content p { color: var(--ink-soft); font-size: var(--fs-base); line-height: var(--lh-base); margin-bottom: var(--space-4); }
+.about-content .seal {
+  font-size: var(--fs-xl);
+  transform: rotate(-4deg); /* hand-stamped, not typeset */
+  box-shadow: inset 0 0 0 1px rgba(245, 241, 232, 0.35);
+}
 
+/* ── Why us ────────────────────────────────────────────── */
 .why-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 .why-list li { padding: var(--space-3); background: var(--paper-warm); border-left: 3px solid var(--gold); font-size: var(--fs-sm); color: var(--ink-soft); }
 
-.closing-cta { text-align: center; padding-block: var(--space-6); }
-.closing-title { font-family: var(--font-kai); font-size: var(--fs-2xl); color: var(--ink); margin-bottom: var(--space-4); }
+/* ── Closing CTA: 天地杆 top & bottom rods ─────────────── */
+.closing-cta { position: relative; text-align: center; padding-block: var(--space-6); }
+.closing-cta::before, .closing-cta::after {
+  content: ""; position: absolute; left: 50%; transform: translateX(-50%);
+  width: min(100%, 36rem); height: 1px;
+  background: linear-gradient(to right, transparent, var(--line-gold), transparent);
+}
+.closing-cta::before { top: 0; }
+.closing-cta::after { bottom: 0; }
+.closing-title { font-family: var(--font-kai); font-size: var(--fs-2xl); color: var(--ink); margin-bottom: var(--space-4); letter-spacing: .08em; }
