@@ -1,0 +1,8 @@
+# Characters used by the site. Re-run subset-font.mjs after adding new text to HTML/JSON to refresh.
+# This file contains site-specific text. The script also adds:
+# - ASCII printable (U+0020-U+007E)
+# - General punctuation (U+2000-U+206F)
+# - CJK symbols & punctuation (U+3000-U+303F)
+# - Halfwidth/fullwidth forms (U+FF00-U+FFEF)
+# - GB2312 level-1 common characters (3755 chars, embedded in script)
+栖影堂愿景和目标空间简介我们的服务人像写真婚礼摄影活动代表作品入口点击前往联系方式微信邮箱发送邮件信息请注明来意电话工作时间为什么选择全风格拍摄后期精修支持视频一对一沟通快速交付记录仪式接亲宴会外景精选案例领证跟拍分类清新日系情绪韩系港夜景优秀企业年会发布路演展会预约姓名手机日期类型备注提交成功失败请重试首页返回更多查看关于详情内容介绍价格套餐优惠活动通知推荐热门最新暂无加载中完成确认取消联系客服发送留言订阅分享点赞收藏举报投诉建议反馈意见帮助文档条款隐私政策版权所免责声明网站地图搜索标签归档目录时分秒上下左右开关启用禁用显示隐藏展开收起刷新重置导出导入备份恢复安装卸载更新升级配置管理员用户游客会员登录注册找回验证码密码账号昵称头像性别年龄地区生日身份证银行卡地址城市省份国家邮编公司职位行业规模融资阶段团队合伙招聘薪资待遇福利实习兼职临时合同项目外包产品方案解决技术支持售后售前咨询电话热线在线忙碌勿扰模式静音震动铃声

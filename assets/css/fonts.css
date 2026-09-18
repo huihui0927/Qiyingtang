@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.cnpmjs.org/css2?family=Noto+Serif+SC:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap");
+
+@font-face {
+  font-family: "LXGW WenKai";
+  src: url("../fonts/lxgw-wenkai-regular-subset.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "LXGW WenKai";
+  src: url("../fonts/lxgw-wenkai-medium-subset.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
