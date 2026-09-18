@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="栖影堂印章">
+  <rect x="2" y="2" width="96" height="96" rx="2" fill="#A8321E"/>
+  <text x="50" y="40" text-anchor="middle" dominant-baseline="central" fill="#F5F1E8"
+        font-family="&quot;LXGW WenKai&quot;,&quot;Kaiti SC&quot;,&quot;STKaiti&quot;,serif"
+        font-size="30" font-weight="500" letter-spacing="2">栖影</text>
+  <text x="50" y="72" text-anchor="middle" dominant-baseline="central" fill="#F5F1E8"
+        font-family="&quot;LXGW WenKai&quot;,&quot;Kaiti SC&quot;,&quot;STKaiti&quot;,serif"
+        font-size="30" font-weight="500">堂</text>
+</svg>

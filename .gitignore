@@ -9,4 +9,5 @@ dist/
 .dev.vars
 assets/images/**/*
 !assets/images/.gitkeep
+!assets/images/home/seal.svg
 assets/fonts/*.woff2
