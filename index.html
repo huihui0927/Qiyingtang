@@ -1,0 +1,109 @@
+<!-- @vars {
+  "title": "首页",
+  "description": "栖影堂 Lrishui — 专注人像写真 / 婚礼摄影 / 活动纪实的摄影工作室。栖一方光影，留半盏流年。",
+  "active": "home"
+} -->
+<!-- @include partials/head.html -->
+<!-- @include partials/nav.html -->
+
+<main>
+  <section class="hero container" data-reveal>
+    <div class="hero-seal" aria-hidden="true">
+      <img src="assets/images/home/seal.svg" alt="" width="64" height="64">
+    </div>
+    <p class="hero-eyebrow"><span lang="en">Lrishui Studio</span> · 摄影工作室</p>
+    <h1 class="hero-title">栖一方光影<br>留半盏流年</h1>
+    <p class="hero-sub">用影像留住细碎时光。</p>
+    <p class="hero-cta">
+      <a class="btn btn-primary" href="booking.html">预约拍摄</a>
+      <a class="btn btn-ghost" href="#featured">查看作品</a>
+    </p>
+  </section>
+
+  <section class="container services" id="services" data-reveal>
+    <div class="section-title"><h2>我们的服务</h2><span class="en">Services</span></div>
+    <div class="services-grid">
+      <article class="service-card">
+        <img class="service-thumb" src="assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo-thumb.webp" alt="人像写真代表作品" width="800" height="1200" loading="lazy">
+        <h3>人像写真</h3>
+        <p>清新日系 / 情绪写真 / 韩系风 / 港风 / 夜景写真，五种风格任你选。</p>
+        <a href="portrait.html">查看客片 →</a>
+      </article>
+      <article class="service-card">
+        <img class="service-thumb" src="assets/images/wedding/0da947d78e46dd64c8babfbc58185984-thumb.webp" alt="婚礼摄影代表作品" width="800" height="533" loading="lazy">
+        <h3>婚礼摄影</h3>
+        <p>仪式 · 接亲 · 宴会 · 外景，全程跟拍，领证日也值得被记录。</p>
+        <a href="wedding.html">查看案例 →</a>
+      </article>
+      <article class="service-card">
+        <img class="service-thumb" src="assets/images/event/5b89a7c689918f17caffac3ae4336f67-thumb.webp" alt="活动摄影代表作品" width="800" height="725" loading="lazy">
+        <h3>活动摄影</h3>
+        <p>企业活动 / 年会 / 发布会 / 路演 / 展会，专业纪实，快速交付。</p>
+        <a href="event.html">查看案例 →</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="container featured" id="featured" data-reveal>
+    <div class="section-title"><h2>精选作品</h2><span class="en">Featured Works</span></div>
+    <div class="gallery-grid" id="featured-grid"></div>
+  </section>
+
+  <section class="container about" data-reveal>
+    <div class="section-title"><h2>关于栖影堂</h2><span class="en">About Us</span></div>
+    <div class="about-content">
+      <p>栖影堂是一间专注光影的工作室。我们相信，每一帧画面都承载着独一无二的故事——无论是人像写真中的细腻情绪、婚礼现场的温暖瞬间，还是活动纪实的精彩片段。用镜头捕捉时光，以影像诉说情感，是我们始终如一的坚持。</p>
+      <span class="seal" aria-hidden="true">栖</span>
+    </div>
+  </section>
+
+  <section class="container why" data-reveal>
+    <div class="section-title"><h2>为什么选择我们</h2><span class="en">Why Us</span></div>
+    <ul class="why-list">
+      <li>全风格拍摄</li>
+      <li>后期精修</li>
+      <li>支持视频拍摄</li>
+      <li>一对一沟通</li>
+      <li>快速交付</li>
+    </ul>
+  </section>
+
+  <section class="container closing-cta" data-reveal>
+    <h2 class="closing-title">想留下你的细碎时光？</h2>
+    <a class="btn btn-primary" href="booking.html">前往预约</a>
+  </section>
+</main>
+
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/home.css">
+<script type="module">
+  import { initReveal } from './assets/js/reveal.js';
+  import { openLightbox } from './assets/js/lightbox.js';
+  initReveal();
+
+  async function loadFeatured() {
+    const [p, w, e] = await Promise.all([
+      fetch('assets/data/portrait.json').then(r => r.json()),
+      fetch('assets/data/wedding.json').then(r => r.json()),
+      fetch('assets/data/event.json').then(r => r.json()),
+    ]);
+    const pick = (items, n) => {
+      const shuffled = [...items].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, n);
+    };
+    const featured = [...pick(p.items, 3), ...pick(w.items, 3), ...pick(e.items, 3)];
+    const grid = document.getElementById('featured-grid');
+    featured.forEach((item, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'gallery-item';
+      btn.type = 'button';
+      btn.setAttribute('aria-label', item.alt || '查看作品');
+      btn.innerHTML = `<img src="${item.thumb}" alt="${item.alt || ''}" width="${item.width}" height="${item.height}" loading="lazy">`;
+      btn.addEventListener('click', () => openLightbox(featured, i, btn));
+      grid.append(btn);
+    });
+  }
+  loadFeatured();
+</script>
+
+<!-- @include partials/footer.html -->

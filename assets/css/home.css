@@ -1,0 +1,29 @@
+.hero { text-align: center; padding-block: var(--space-6) var(--space-5); display: grid; gap: var(--space-3); justify-items: center; min-height: 70vh; }
+.hero-seal img { width: 64px; height: 64px; }
+.hero-eyebrow { font-family: var(--font-en); letter-spacing: .25em; text-transform: uppercase; color: var(--ink-mute); font-size: var(--fs-sm); margin: 0; }
+.hero-title { font-family: var(--font-kai); font-size: clamp(2.5rem, 7vw, 4.5rem); line-height: 1.15; margin: 0; letter-spacing: .04em; }
+.hero-sub { color: var(--ink-soft); font-size: var(--fs-lg); margin: 0; }
+.hero-cta { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; margin-top: var(--space-3); }
+.btn { display: inline-block; padding: var(--space-2) var(--space-4); border: 1px solid var(--ink); border-radius: 2px; font-size: var(--fs-sm); text-decoration: none; transition: all .2s; cursor: pointer; }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--seal); border-color: var(--seal); color: var(--paper); }
+.btn-ghost { background: transparent; color: var(--ink); }
+.btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+.services-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.service-card { background: var(--paper-warm); padding: 0; border: 1px solid var(--line); border-radius: 2px; overflow: hidden; display: flex; flex-direction: column; }
+.service-thumb { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.service-card h3 { margin: var(--space-3) var(--space-3) var(--space-2); font-family: var(--font-kai); font-size: var(--fs-lg); }
+.service-card p { margin: 0 var(--space-3) var(--space-3); color: var(--ink-soft); font-size: var(--fs-sm); flex: 1; }
+.service-card a { display: block; padding: var(--space-2) var(--space-3); border-top: 1px solid var(--line); font-size: var(--fs-sm); color: var(--seal); text-decoration: none; text-align: center; transition: background .2s; }
+.service-card a:hover { background: var(--paper); }
+
+.about-content { max-width: 60ch; margin: 0 auto; text-align: center; }
+.about-content p { color: var(--ink-soft); font-size: var(--fs-base); line-height: var(--lh-base); margin-bottom: var(--space-3); }
+.about-content .seal { font-size: var(--fs-2xl); }
+
+.why-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.why-list li { padding: var(--space-3); background: var(--paper-warm); border-left: 3px solid var(--gold); font-size: var(--fs-sm); color: var(--ink-soft); }
+
+.closing-cta { text-align: center; padding-block: var(--space-6); }
+.closing-title { font-family: var(--font-kai); font-size: var(--fs-2xl); color: var(--ink); margin-bottom: var(--space-4); }
