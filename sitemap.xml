@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://qiyangtang.pages.dev/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://qiyangtang.pages.dev/portrait.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://qiyangtang.pages.dev/wedding.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://qiyangtang.pages.dev/event.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://qiyangtang.pages.dev/booking.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://qiyangtang.lrishui.com/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://qiyangtang.lrishui.com/portrait.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://qiyangtang.lrishui.com/wedding.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://qiyangtang.lrishui.com/event.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://qiyangtang.lrishui.com/booking.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
 </urlset>
