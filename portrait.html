@@ -1,7 +1,8 @@
 <!-- @vars {
   "title": "人像写真",
   "description": "栖影堂人像写真客片：清新日系 / 情绪写真 / 韩系风 / 港风 / 夜景写真。",
-  "active": "portrait"
+  "active": "portrait",
+  "canonical": "portrait.html"
 } -->
 <!-- @include partials/head.html -->
 <!-- @include partials/nav.html -->
@@ -33,12 +34,12 @@
   filterEl.addEventListener('click', () => {
     setTimeout(() => {
       const n = gridEl.querySelectorAll('.gallery-item').length;
-      countEl.textContent = `${n} works`;
+      countEl.textContent = `${n} 组作品`;
     }, 0);
   });
   setTimeout(() => {
     const n = gridEl.querySelectorAll('.gallery-item').length;
-    countEl.textContent = `${n} works`;
+    countEl.textContent = `${n} 组作品`;
   }, 500);
 </script>
 <!-- @include partials/footer.html -->

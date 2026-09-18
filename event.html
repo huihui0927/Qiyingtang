@@ -1,7 +1,8 @@
 <!-- @vars {
   "title": "活动摄影",
   "description": "栖影堂活动摄影：企业活动 / 年会 / 发布会 / 路演 / 展会专业纪实。",
-  "active": "event"
+  "active": "event",
+  "canonical": "event.html"
 } -->
 <!-- @include partials/head.html -->
 <!-- @include partials/nav.html -->
@@ -33,12 +34,12 @@
   filterEl.addEventListener('click', () => {
     setTimeout(() => {
       const n = gridEl.querySelectorAll('.gallery-item').length;
-      countEl.textContent = `${n} works`;
+      countEl.textContent = `${n} 组作品`;
     }, 0);
   });
   setTimeout(() => {
     const n = gridEl.querySelectorAll('.gallery-item').length;
-    countEl.textContent = `${n} works`;
+    countEl.textContent = `${n} 组作品`;
   }, 500);
 </script>
 <!-- @include partials/footer.html -->
