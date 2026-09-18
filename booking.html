@@ -1,0 +1,94 @@
+<!-- @vars {
+  "title": "预约拍摄",
+  "description": "预约栖影堂拍摄：人像写真 / 婚礼摄影 / 活动摄影。一对一沟通，快速回复。",
+  "active": "booking"
+} -->
+<!-- @include partials/head.html -->
+<!-- @include partials/nav.html -->
+
+<main>
+  <header class="gallery-page-header container" data-reveal>
+    <h1>预约拍摄</h1>
+    <p class="lede">填写下面的表单，我们会在 1 个工作日内通过微信或电话与您联系。也可以直接 <a href="mailto:lrishui@163.com">发邮件</a> 或致电 <a href="tel:15210475723">152 1047 5723</a>。</p>
+  </header>
+
+  <section class="container booking-wrap" data-reveal>
+    <form id="booking-form" class="booking-form" novalidate>
+      <!-- name field -->
+      <div class="field">
+        <label for="f-name">姓名 <span aria-hidden="true">*</span></label>
+        <input id="f-name" name="name" type="text" required maxlength="30" autocomplete="name" aria-describedby="e-name">
+        <p class="error" id="e-name" data-error-for="name" hidden></p>
+      </div>
+
+      <!-- phone field -->
+      <div class="field">
+        <label for="f-phone">手机号 <span aria-hidden="true">*</span></label>
+        <input id="f-phone" name="phone" type="tel" required inputmode="numeric" autocomplete="tel" pattern="1[3-9]\d{9}" aria-describedby="e-phone">
+        <p class="error" id="e-phone" data-error-for="phone" hidden></p>
+      </div>
+
+      <!-- date field -->
+      <div class="field">
+        <label for="f-date">期望拍摄日期 <span aria-hidden="true">*</span></label>
+        <input id="f-date" name="date" type="date" required aria-describedby="e-date">
+        <p class="error" id="e-date" data-error-for="date" hidden></p>
+      </div>
+
+      <!-- type field -->
+      <div class="field">
+        <label for="f-type">拍摄类型 <span aria-hidden="true">*</span></label>
+        <select id="f-type" name="type" required aria-describedby="e-type">
+          <option value="">请选择…</option>
+          <option value="portrait">人像写真</option>
+          <option value="wedding">婚礼摄影</option>
+          <option value="event">活动摄影</option>
+          <option value="other">其他</option>
+        </select>
+        <p class="error" id="e-type" data-error-for="type" hidden></p>
+      </div>
+
+      <!-- message field -->
+      <div class="field">
+        <label for="f-message">备注（选填）</label>
+        <textarea id="f-message" name="message" rows="4" maxlength="500" aria-describedby="e-message"></textarea>
+        <p class="error" id="e-message" data-error-for="message" hidden></p>
+      </div>
+
+      <!-- honeypot: visually hidden, must remain empty -->
+      <div class="field hp" aria-hidden="true">
+        <label for="f-website">请勿填写此字段</label>
+        <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        <p class="error" id="e-website" data-error-for="website" hidden></p>
+      </div>
+
+      <p class="status" data-status hidden role="status" aria-live="polite"></p>
+
+      <button type="submit" class="btn btn-primary">提交预约</button>
+    </form>
+
+    <!-- Contact card (right column at ≥900px) -->
+    <aside class="booking-contact">
+      <h2>联系我们</h2>
+      <div class="contact-qr">
+        <img src="assets/images/home/image.webp" alt="微信二维码" width="200" height="200" loading="lazy">
+        <p>微信扫码咨询</p>
+      </div>
+      <ul class="contact-list">
+        <li>电话：<a href="tel:15210475723">152 1047 5723</a></li>
+        <li>邮箱：<a href="mailto:lrishui@163.com">lrishui@163.com</a></li>
+        <li>工作时间：10:00–18:00</li>
+      </ul>
+    </aside>
+  </section>
+</main>
+
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/booking.css">
+<script type="module">
+  import { initBooking } from './assets/js/booking.js';
+  import { initReveal } from './assets/js/reveal.js';
+  initReveal();
+  initBooking(document.getElementById('booking-form'));
+</script>
+<!-- @include partials/footer.html -->

@@ -4,11 +4,6 @@
 .hero-title { font-family: var(--font-kai); font-size: clamp(2.5rem, 7vw, 4.5rem); line-height: 1.15; margin: 0; letter-spacing: .04em; }
 .hero-sub { color: var(--ink-soft); font-size: var(--fs-lg); margin: 0; }
 .hero-cta { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; margin-top: var(--space-3); }
-.btn { display: inline-block; padding: var(--space-2) var(--space-4); border: 1px solid var(--ink); border-radius: 2px; font-size: var(--fs-sm); text-decoration: none; transition: all .2s; cursor: pointer; }
-.btn-primary { background: var(--ink); color: var(--paper); }
-.btn-primary:hover { background: var(--seal); border-color: var(--seal); color: var(--paper); }
-.btn-ghost { background: transparent; color: var(--ink); }
-.btn-ghost:hover { background: var(--ink); color: var(--paper); }
 
 .services-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .service-card { background: var(--paper-warm); padding: 0; border: 1px solid var(--line); border-radius: 2px; overflow: hidden; display: flex; flex-direction: column; }

@@ -1,0 +1,148 @@
+/* ── Booking page ── */
+
+/* 2-column layout at ≥900px */
+.booking-wrap {
+  display: grid;
+  gap: var(--space-5);
+}
+@media (min-width: 900px) {
+  .booking-wrap {
+    grid-template-columns: 1fr 280px;
+  }
+}
+
+/* ── Form ── */
+.booking-form {
+  display: grid;
+  gap: var(--space-3);
+  background: var(--paper-warm);
+  border: 1px solid var(--line);
+  padding: var(--space-4);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.field label {
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+}
+
+.field input,
+.field select,
+.field textarea {
+  font-family: inherit;
+  font-size: var(--fs-base);
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink);
+  transition: border-color .2s;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--seal);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--seal) 20%, transparent);
+}
+
+.field [aria-invalid="true"] {
+  border-color: #c0392b;
+}
+
+.field .error {
+  font-size: var(--fs-sm);
+  color: #c0392b;
+  margin: 0;
+}
+
+/* Honeypot: visually hidden but still in DOM */
+.field.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ── Status bar ── */
+.status {
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--line);
+  font-size: var(--fs-sm);
+  margin: 0;
+}
+.status[data-kind="error"] {
+  border-color: #c0392b;
+  color: #c0392b;
+  background: #fdf0ef;
+}
+.status[data-kind="success"] {
+  border-color: var(--seal);
+  color: var(--seal);
+  background: color-mix(in srgb, var(--seal) 6%, var(--paper));
+}
+.status[data-kind="pending"] {
+  border-color: var(--ink-mute);
+  color: var(--ink-soft);
+}
+
+/* Button disabled */
+.btn[disabled] {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* ── Contact card ── */
+.booking-contact {
+  background: var(--paper-warm);
+  border: 1px solid var(--line);
+  padding: var(--space-4);
+  text-align: center;
+}
+@media (min-width: 900px) {
+  .booking-contact {
+    align-self: start;
+  }
+}
+
+.booking-contact h2 {
+  font-family: var(--font-kai);
+  font-size: var(--fs-lg);
+  margin: 0 0 var(--space-3);
+}
+
+.contact-qr img {
+  width: 200px;
+  height: auto;
+  border: 1px solid var(--line);
+}
+
+.contact-qr p {
+  font-size: var(--fs-sm);
+  color: var(--ink-soft);
+  margin: var(--space-2) 0 0;
+}
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0 0;
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  text-align: left;
+}
+
+.contact-list a {
+  color: var(--seal);
+  text-decoration: none;
+}
+.contact-list a:hover {
+  text-decoration: underline;
+}

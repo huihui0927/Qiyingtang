@@ -13,3 +13,9 @@
 .gallery-item:hover img, .gallery-item:focus-visible img { transform: scale(1.04); }
 .gallery-item::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(31,27,22,.35), transparent 50%); opacity: 0; transition: opacity .3s; pointer-events: none; }
 .gallery-item:hover::after { opacity: 1; }
+
+.btn { display: inline-block; padding: var(--space-2) var(--space-4); border: 1px solid var(--ink); border-radius: 2px; font-size: var(--fs-sm); text-decoration: none; transition: all .2s; cursor: pointer; }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--seal); border-color: var(--seal); color: var(--paper); }
+.btn-ghost { background: transparent; color: var(--ink); }
+.btn-ghost:hover { background: var(--ink); color: var(--paper); }
