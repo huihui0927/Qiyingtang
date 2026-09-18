@@ -8,71 +8,122 @@
 <!-- @include partials/nav.html -->
 
 <main>
-  <section class="hero container">
-    <div class="hero-seal" aria-hidden="true">
-      <img src="assets/images/home/seal.svg" alt="" width="84" height="84">
+  <section class="hero">
+    <div class="hero-media" aria-hidden="true">
+      <img class="hero-photo" src="assets/images/wedding/0da947d78e46dd64c8babfbc58185984.webp" alt="" width="2000" height="1333" fetchpriority="high">
+      <div class="hero-shade"></div>
     </div>
-    <p class="hero-eyebrow"><span lang="en">Lrishui Studio</span> · 摄影工作室</p>
-    <h1 class="hero-title">栖一方光影<br>留半盏流年</h1>
-    <p class="hero-sub">用影像留住细碎时光。</p>
-    <p class="hero-cta">
-      <a class="btn btn-primary" href="booking.html">预约拍摄</a>
-      <a class="btn btn-ghost" href="#featured">查看作品</a>
-    </p>
-    <a class="hero-cue" href="#services" aria-label="向下浏览内容">展卷</a>
-  </section>
-
-  <section class="container services" id="services" data-reveal>
-    <div class="section-title"><h2>我们的服务</h2><span class="en" lang="en">Services</span></div>
-    <div class="services-grid">
-      <article class="service-card">
-        <img class="service-thumb" src="assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo-thumb.webp" alt="人像写真代表作品" width="800" height="1200" loading="lazy">
-        <h3>人像写真</h3>
-        <p>清新日系 / 情绪写真 / 韩系风 / 港风 / 夜景写真，五种风格任你选。</p>
-        <a href="portrait.html">查看客片 →</a>
-      </article>
-      <article class="service-card">
-        <img class="service-thumb" src="assets/images/wedding/0da947d78e46dd64c8babfbc58185984-thumb.webp" alt="婚礼摄影代表作品" width="800" height="533" loading="lazy">
-        <h3>婚礼摄影</h3>
-        <p>仪式 · 接亲 · 宴会 · 外景，全程跟拍，领证日也值得被记录。</p>
-        <a href="wedding.html">查看案例 →</a>
-      </article>
-      <article class="service-card">
-        <img class="service-thumb" src="assets/images/event/5b89a7c689918f17caffac3ae4336f67-thumb.webp" alt="活动摄影代表作品" width="800" height="725" loading="lazy">
-        <h3>活动摄影</h3>
-        <p>企业活动 / 年会 / 发布会 / 路演 / 展会，专业纪实，快速交付。</p>
-        <a href="event.html">查看案例 →</a>
-      </article>
+    <div class="hero-inner container">
+      <p class="hero-eyebrow"><span lang="en">Lrishui Studio</span> · 摄影工作室</p>
+      <h1 class="hero-title"><span class="line">栖一方光影</span><span class="line">留半盏流年</span></h1>
+      <ul class="hero-biz">
+        <li>婚礼摄影</li>
+        <li>人像写真</li>
+        <li>活动纪实</li>
+      </ul>
+      <p class="hero-cta">
+        <a class="btn btn-primary" href="booking.html">预约拍摄</a>
+        <a class="btn btn-ghost" href="#works">查看作品</a>
+      </p>
     </div>
+    <a class="hero-cue" href="#works" aria-label="向下浏览内容">展卷</a>
   </section>
 
-  <section class="container featured" id="featured" data-reveal>
-    <div class="section-title"><h2>精选作品</h2><span class="en" lang="en">Featured Works</span></div>
-    <div class="gallery-grid" id="featured-grid"></div>
-  </section>
-
-  <section class="container about" data-reveal>
-    <div class="section-title"><h2>关于栖影堂</h2><span class="en" lang="en">About Us</span></div>
-    <div class="about-content">
-      <p>栖影堂是一间专注光影的工作室。我们相信，每一帧画面都承载着独一无二的故事——无论是人像写真中的细腻情绪、婚礼现场的温暖瞬间，还是活动纪实的精彩片段。用镜头捕捉时光，以影像诉说情感，是我们始终如一的坚持。</p>
-      <span class="seal" aria-hidden="true">栖</span>
+  <section class="container works" id="works" data-reveal>
+    <div class="section-title"><h2>精选作品</h2><span class="en" lang="en">Selected Works</span></div>
+    <div class="bento" id="bento">
+      <button class="bento-cell bento-lg" type="button" data-index="0" aria-label="查看作品：婚礼全天纪实">
+        <img src="assets/images/wedding/1040g00830qg6n847nu5g5nhqauo080nosh232p8.webp" alt="婚礼全天纪实" width="1920" height="1280" loading="lazy">
+        <span class="bento-cap"><span class="cap-year" lang="en">2026</span> 婚礼全天纪实 · 从晨纱到晚宴</span>
+      </button>
+      <button class="bento-cell bento-sm" type="button" data-index="1" aria-label="查看作品：人像写真">
+        <img src="assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo.webp" alt="人像写真 · 情绪与光影" width="1280" height="1920" loading="lazy">
+        <span class="bento-cap"><span class="cap-year" lang="en">Portrait</span> 人像写真 · 情绪与光影</span>
+      </button>
+      <button class="bento-cell bento-sm" type="button" data-index="2" aria-label="查看作品：品牌活动纪实">
+        <img src="assets/images/event/5b89a7c689918f17caffac3ae4336f67.webp" alt="品牌活动纪实" width="2000" height="1813" loading="lazy">
+        <span class="bento-cap"><span class="cap-year" lang="en">Event</span> 品牌活动 · 现场纪实</span>
+      </button>
     </div>
   </section>
 
-  <section class="container why" data-reveal>
-    <div class="section-title"><h2>为什么选择我们</h2><span class="en" lang="en">Why Us</span></div>
-    <ul class="why-list">
-      <li>全风格拍摄</li>
-      <li>后期精修</li>
-      <li>支持视频拍摄</li>
-      <li>一对一沟通</li>
-      <li>快速交付</li>
-    </ul>
+  <section class="services" id="services" data-reveal>
+    <div class="container">
+      <div class="section-title"><h2>我们的服务</h2><span class="en" lang="en">Services</span></div>
+      <div class="services-grid">
+        <article class="service-card">
+          <img class="service-thumb" src="assets/images/wedding/0da947d78e46dd64c8babfbc58185984-thumb.webp" alt="婚礼摄影代表作品" width="800" height="533" loading="lazy">
+          <div class="service-body">
+            <h3>婚礼摄影</h3>
+            <p class="en" lang="en">Wedding Stories</p>
+            <p>记录人生重要章节。仪式 · 接亲 · 宴会 · 外景，全程跟拍，领证日也值得被记录。</p>
+            <a href="wedding.html">查看案例 →</a>
+          </div>
+        </article>
+        <article class="service-card">
+          <img class="service-thumb" src="assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo-thumb.webp" alt="人像写真代表作品" width="800" height="1200" loading="lazy">
+          <div class="service-body">
+            <h3>人像写真</h3>
+            <p class="en" lang="en">Portrait Session</p>
+            <p>留下属于你的光影。清新日系 / 情绪写真 / 韩系风 / 港风 / 夜景写真。</p>
+            <a href="portrait.html">查看客片 →</a>
+          </div>
+        </article>
+        <article class="service-card">
+          <img class="service-thumb" src="assets/images/event/5b89a7c689918f17caffac3ae4336f67-thumb.webp" alt="活动摄影代表作品" width="800" height="725" loading="lazy">
+          <div class="service-body">
+            <h3>活动摄影</h3>
+            <p class="en" lang="en">Event Documentary</p>
+            <p>保持品牌与现场记忆。企业活动 / 年会 / 发布会 / 路演 / 展会，快速交付。</p>
+            <a href="event.html">查看案例 →</a>
+          </div>
+        </article>
+      </div>
+    </div>
   </section>
 
-  <section class="container closing-cta" data-reveal>
-    <h2 class="closing-title">想留下你的细碎时光？</h2>
-    <a class="btn btn-primary" href="booking.html">前往预约</a>
+  <section class="container story" data-reveal>
+    <div class="story-grid">
+      <figure class="story-photo">
+        <img src="assets/images/wedding/1040g00830qg6n847nu005nhqauo080notmf2n5o.webp" alt="摄影师工作中的瞬间" width="1920" height="1280" loading="lazy">
+        <figcaption lang="en">Behind the Lens</figcaption>
+      </figure>
+      <div class="story-text">
+        <div class="section-title"><h2>关于栖影堂</h2><span class="en" lang="en">About Us</span></div>
+        <blockquote>摄影不是记录，而是与时间交换记忆。</blockquote>
+        <p>我们相信，每个人都有值得被收藏的一刻——无论是婚礼现场的滚烫瞬间、人像写真里的细腻情绪，还是活动纪实中的高光片段。用镜头捕捉时光，以影像诉说情感，是我们始终如一的坚持。</p>
+        <span class="seal" aria-hidden="true">栖</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="container client-story" data-reveal>
+    <div class="section-title"><h2>客片故事</h2><span class="en" lang="en">Client Stories</span></div>
+    <article class="story-feature">
+      <div class="story-feature-media">
+        <img src="assets/images/wedding/1040g008322p5b4i9nalg5n96ifr4mm5c76e7m6o.webp" alt="一场秋日婚礼的外景记录" width="1333" height="2000" loading="lazy">
+      </div>
+      <div class="story-feature-text">
+        <span class="issue" lang="en">01</span>
+        <h3 lang="zh-CN">林先生 <span class="x" lang="en">×</span> 王小姐</h3>
+        <p class="meta">秋日外景婚礼 · 全天纪实</p>
+        <p class="lede">一场关于风、阳光和爱的记录。</p>
+        <a class="view-story" href="wedding.html"><span lang="en">View Story</span> →</a>
+      </div>
+    </article>
+  </section>
+
+  <section class="closing-cta" data-reveal>
+    <div class="container">
+      <h2 class="closing-title">如果你正在寻找——</h2>
+      <ul class="closing-list">
+        <li>婚礼摄影</li>
+        <li>个人写真</li>
+        <li>品牌影像</li>
+      </ul>
+      <p class="closing-sub">欢迎告诉我们你的故事。</p>
+      <a class="btn btn-primary" href="booking.html">预约咨询</a>
+    </div>
   </section>
 </main>
 
@@ -83,29 +134,30 @@
   import { openLightbox } from './assets/js/lightbox.js';
   initReveal();
 
-  async function loadFeatured() {
-    const [p, w, e] = await Promise.all([
-      fetch('assets/data/portrait.json').then(r => r.json()),
-      fetch('assets/data/wedding.json').then(r => r.json()),
-      fetch('assets/data/event.json').then(r => r.json()),
-    ]);
-    const pick = (items, n) => {
-      const shuffled = [...items].sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, n);
-    };
-    const featured = [...pick(p.items, 3), ...pick(w.items, 3), ...pick(e.items, 3)];
-    const grid = document.getElementById('featured-grid');
-    featured.forEach((item, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'gallery-item';
-      btn.type = 'button';
-      btn.setAttribute('aria-label', item.alt || '查看作品');
-      btn.innerHTML = `<img src="${item.thumb}" alt="${item.alt || ''}" width="${item.width}" height="${item.height}" loading="lazy">`;
-      btn.addEventListener('click', () => openLightbox(featured, i, btn));
-      grid.append(btn);
-    });
-  }
-  loadFeatured();
+  const bentoItems = [
+    {
+      src: 'assets/images/wedding/1040g00830qg6n847nu5g5nhqauo080nosh232p8.webp',
+      fallback: 'assets/images/wedding/1040g00830qg6n847nu5g5nhqauo080nosh232p8.jpg',
+      thumb: 'assets/images/wedding/1040g00830qg6n847nu5g5nhqauo080nosh232p8-thumb.webp',
+      alt: '婚礼全天纪实', width: 1920, height: 1280,
+    },
+    {
+      src: 'assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo.webp',
+      fallback: 'assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo.jpg',
+      thumb: 'assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo-thumb.webp',
+      alt: '人像写真 · 情绪与光影', width: 1280, height: 1920,
+    },
+    {
+      src: 'assets/images/event/5b89a7c689918f17caffac3ae4336f67.webp',
+      fallback: 'assets/images/event/5b89a7c689918f17caffac3ae4336f67.jpg',
+      thumb: 'assets/images/event/5b89a7c689918f17caffac3ae4336f67-thumb.webp',
+      alt: '品牌活动 · 现场纪实', width: 2000, height: 1813,
+    },
+  ];
+  const cells = [...document.querySelectorAll('.bento-cell')];
+  cells.forEach(btn => {
+    btn.addEventListener('click', () => openLightbox(bentoItems, Number(btn.dataset.index), btn));
+  });
 </script>
 
 <!-- @include partials/footer.html -->

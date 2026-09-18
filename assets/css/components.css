@@ -3,7 +3,7 @@
 @media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; transition: none; } }
 
 .filter-bar { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
-.filter-chip { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); padding: var(--space-1) var(--space-3); border-radius: 999px; font-size: var(--fs-sm); font-family: var(--font-serif-cn); transition: all .2s; }
+.filter-chip { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); padding: var(--space-1) var(--space-3); border-radius: 999px; font-size: var(--fs-sm); font-family: var(--font-sans-cn); transition: all .2s; }
 .filter-chip:hover { border-color: var(--ink-mute); color: var(--ink); }
 .filter-chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 

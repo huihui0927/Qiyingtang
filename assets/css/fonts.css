@@ -13,3 +13,13 @@
   font-style: normal;
   font-display: swap;
 }
+
+/* 字魂龙吟手书 — 已购商用授权，仅子集化站点用字。
+   Generate with: node scripts/subset-zihun.mjs */
+@font-face {
+  font-family: "ZiHun Longyin Shu";
+  src: url("../fonts/zihun-longyin-shushu-subset.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

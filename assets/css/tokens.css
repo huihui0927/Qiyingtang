@@ -12,7 +12,8 @@
 
   /* fonts */
   --font-kai: "LXGW WenKai", "Kaiti SC", "STKaiti", serif;
-  --font-serif-cn: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-sans-cn: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-brush: "ZiHun Longyin Shu", "LXGW WenKai", "Kaiti SC", "STKaiti", serif;
   --font-en: "Cormorant Garamond", "Times New Roman", serif;
 
   /* breakpoints (use in media queries directly; vars kept for docs) */
