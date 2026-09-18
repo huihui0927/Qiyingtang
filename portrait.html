@@ -1,0 +1,44 @@
+<!-- @vars {
+  "title": "人像写真",
+  "description": "栖影堂人像写真客片：清新日系 / 情绪写真 / 韩系风 / 港风 / 夜景写真。",
+  "active": "portrait"
+} -->
+<!-- @include partials/head.html -->
+<!-- @include partials/nav.html -->
+
+<main>
+  <header class="gallery-page-header container" data-reveal>
+    <h1>人像写真</h1>
+    <p class="lede">清新日系 · 情绪写真 · 韩系风 · 港风 · 夜景写真 — 五种风格，记录你此刻的样子。</p>
+  </header>
+
+  <section class="container">
+    <div class="gallery-toolbar">
+      <div id="portrait-filter"></div>
+      <span class="gallery-count" id="portrait-count" aria-live="polite"></span>
+    </div>
+    <div id="portrait-grid" class="gallery-mount"></div>
+  </section>
+</main>
+
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/lightbox.css">
+<link rel="stylesheet" href="assets/css/gallery.css">
+<script type="module">
+  import { mountGallery } from './assets/js/gallery.js';
+  const filterEl = document.getElementById('portrait-filter');
+  const gridEl = document.getElementById('portrait-grid');
+  const countEl = document.getElementById('portrait-count');
+  mountGallery({ mountEl: gridEl, filterEl, dataUrl: 'assets/data/portrait.json' });
+  filterEl.addEventListener('click', () => {
+    setTimeout(() => {
+      const n = gridEl.querySelectorAll('.gallery-item').length;
+      countEl.textContent = `${n} works`;
+    }, 0);
+  });
+  setTimeout(() => {
+    const n = gridEl.querySelectorAll('.gallery-item').length;
+    countEl.textContent = `${n} works`;
+  }, 500);
+</script>
+<!-- @include partials/footer.html -->
