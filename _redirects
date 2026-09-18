@@ -1,0 +1,7 @@
+# V1: 保留 .html 后缀，不启用 301 重定向
+# 如需启用，取消注释并同步更新 partials/nav.html 与所有 <a href>
+# /index.html    /            301
+# /portrait.html /portrait    301
+# /wedding.html  /wedding     301
+# /event.html    /event       301
+# /booking.html  /booking     301
