@@ -11,6 +11,12 @@ function makeReq({ body, headers = {}, method = 'POST', url = 'https://x/api/con
 }
 const ENV = { FEISHU_WEBHOOK_URL: 'https://open.feishu.cn/open-apis/bot/v2/hook/test' };
 
+function futureDate(daysAhead = 30) {
+  const d = new Date();
+  d.setDate(d.getDate() + daysAhead);
+  return d.toISOString().slice(0, 10);
+}
+
 describe('buildFeishuPost', () => {
   it('builds rich-text post with all fields', () => {
     const p = buildFeishuPost({ name:'张三', phone:'15210475723', date:'2026-10-01', type:'portrait', message:'你好' }, '1.2.3.4');
@@ -50,7 +56,7 @@ describe('POST /api/contact', () => {
   beforeEach(() => { vi.restoreAllMocks(); });
 
   it('rejects cross-origin', async () => {
-    const req = makeReq({ body: { name:'a', phone:'15210475723', date:'2099-01-01', type:'portrait', message:'' }, headers: { origin: 'https://evil.com' } });
+    const req = makeReq({ body: { name:'a', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' }, headers: { origin: 'https://evil.com' } });
     const res = await POST(req, { env: ENV });
     expect(res.status).toBe(400);
     const j = await res.json();
@@ -59,7 +65,7 @@ describe('POST /api/contact', () => {
 
   it('silently accepts honeypot (returns 200 but does not forward)', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 0 }), { status: 200 }));
-    const req = makeReq({ body: { name:'a', phone:'15210475723', date:'2099-01-01', type:'portrait', message:'', website:'bot' } });
+    const req = makeReq({ body: { name:'a', phone:'15210475723', date: futureDate(30), type:'portrait', message:'', website:'bot' } });
     const res = await POST(req, { env: ENV });
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
@@ -77,7 +83,7 @@ describe('POST /api/contact', () => {
 
   it('forwards to feishu and returns ok', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 0, msg: 'success' }), { status: 200 }));
-    const req = makeReq({ body: { name:'张三', phone:'15210475723', date:'2099-01-01', type:'portrait', message:'hi' } });
+    const req = makeReq({ body: { name:'张三', phone:'15210475723', date: futureDate(30), type:'portrait', message:'hi' } });
     const res = await POST(req, { env: ENV });
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
@@ -86,7 +92,7 @@ describe('POST /api/contact', () => {
 
   it('returns 502 when feishu replies non-zero after retry', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 19001, msg: 'sign error' }), { status: 200 }));
-    const req = makeReq({ body: { name:'张三', phone:'15210475723', date:'2099-01-01', type:'portrait', message:'' } });
+    const req = makeReq({ body: { name:'张三', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' } });
     const res = await POST(req, { env: ENV });
     expect(res.status).toBe(502);
   });
@@ -95,7 +101,7 @@ describe('POST /api/contact', () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch')
       .mockResolvedValueOnce(new Response(JSON.stringify({ code: 19001, msg: 'temp error' }), { status: 200 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ code: 0 }), { status: 200 }));
-    const req = makeReq({ body: { name:'张三', phone:'15210475723', date:'2099-01-01', type:'portrait', message:'' } });
+    const req = makeReq({ body: { name:'张三', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' } });
     const res = await POST(req, { env: ENV });
     expect(res.status).toBe(200);
     expect(fetchSpy).toHaveBeenCalledTimes(2);
@@ -103,7 +109,7 @@ describe('POST /api/contact', () => {
 
   it('signs when FEISHU_WEBHOOK_SECRET present', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 0 }), { status: 200 }));
-    const req = makeReq({ body: { name:'张三', phone:'15210475723', date:'2099-01-01', type:'portrait', message:'' } });
+    const req = makeReq({ body: { name:'张三', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' } });
     const res = await POST(req, { env: { ...ENV, FEISHU_WEBHOOK_SECRET: 's3cr3t' } });
     expect(res.status).toBe(200);
     const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
@@ -113,7 +119,7 @@ describe('POST /api/contact', () => {
 
   it('reads CF-Connecting-IP and passes to buildFeishuPost', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 0 }), { status: 200 }));
-    const req = makeReq({ body: { name:'张三', phone:'15210475723', date:'2099-01-01', type:'portrait', message:'' }, headers: { 'cf-connecting-ip': '203.0.113.42' } });
+    const req = makeReq({ body: { name:'张三', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' }, headers: { 'cf-connecting-ip': '203.0.113.42' } });
     const res = await POST(req, { env: ENV });
     expect(res.status).toBe(200);
     const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
@@ -124,16 +130,25 @@ describe('POST /api/contact', () => {
 
   it('accepts name up to 30 chars', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 0 }), { status: 200 }));
-    const req = makeReq({ body: { name:'a'.repeat(30), phone:'15210475723', date:'2099-01-01', type:'portrait', message:'' } });
+    const req = makeReq({ body: { name:'a'.repeat(30), phone:'15210475723', date: futureDate(30), type:'portrait', message:'' } });
     const res = await POST(req, { env: ENV });
     expect(res.status).toBe(200);
   });
 
   it('rejects name over 30 chars', async () => {
-    const req = makeReq({ body: { name:'a'.repeat(31), phone:'15210475723', date:'2099-01-01', type:'portrait', message:'' } });
+    const req = makeReq({ body: { name:'a'.repeat(31), phone:'15210475723', date: futureDate(30), type:'portrait', message:'' } });
     const res = await POST(req, { env: ENV });
     expect(res.status).toBe(400);
     const j = await res.json();
     expect(j.errors.name).toBeDefined();
+  });
+
+  it('rejects date > +365d', async () => {
+    const farFuture = new Date(); farFuture.setDate(farFuture.getDate() + 400);
+    const req = makeReq({ body: { name:'张三', phone:'15210475723', date: farFuture.toISOString().slice(0,10), type:'portrait', message:'' } });
+    const res = await POST(req, { env: ENV });
+    expect(res.status).toBe(400);
+    const j = await res.json();
+    expect(j.errors.date).toBeDefined();
   });
 });

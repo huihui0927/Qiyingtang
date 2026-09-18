@@ -25,7 +25,10 @@ function validate(p) {
   else {
     const d = new Date(date + 'T00:00:00Z');
     const t = new Date(); t.setUTCHours(0,0,0,0);
+    const MAX_DATE_DAYS = 365;
+    const max = new Date(t); max.setUTCDate(max.getUTCDate() + MAX_DATE_DAYS);
     if (d < t) errors.date = '过去';
+    else if (d > max) errors.date = '超过一年';
   }
   if (!(p.type in TYPES)) errors.type = '无效类型';
   if ((p.message || '').length > MAX_MESSAGE) errors.message = '过长';
