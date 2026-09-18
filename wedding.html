@@ -1,0 +1,73 @@
+<!-- @vars {
+  "title": "婚礼摄影",
+  "description": "栖影堂婚礼摄影：仪式 / 接亲 / 宴会 / 外景全程跟拍，含领证日记录。",
+  "active": "wedding"
+} -->
+<!-- @include partials/head.html -->
+<!-- @include partials/nav.html -->
+
+<main>
+  <header class="gallery-page-header container" data-reveal>
+    <h1>婚礼摄影</h1>
+    <p class="lede">我们记录：仪式 · 接亲 · 宴会 · 外景。也记录领证那一天，你们成为彼此家人的瞬间。</p>
+  </header>
+
+  <section class="container wedding-section" data-reveal>
+    <div class="section-header">
+      <h2>领证跟拍</h2>
+      <div class="gold-line"></div>
+    </div>
+    <div class="gallery-grid" id="lingzheng-grid"></div>
+  </section>
+
+  <section class="container wedding-section" data-reveal>
+    <div class="section-header">
+      <h2>婚礼跟拍</h2>
+      <div class="gold-line"></div>
+    </div>
+    <div class="gallery-grid" id="wedding-grid"></div>
+  </section>
+</main>
+
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/lightbox.css">
+<link rel="stylesheet" href="assets/css/gallery.css">
+<style>
+  .wedding-section { margin-bottom: var(--space-6); }
+  .section-header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
+  .section-header h2 { margin: 0; font-family: var(--font-kai); font-size: var(--fs-xl); font-weight: 500; }
+  .gold-line { flex: 1; height: 1px; background: var(--gold); opacity: 0.4; }
+</style>
+<script type="module">
+  import { openLightbox, bindGallery } from './assets/js/lightbox.js';
+  import { initReveal } from './assets/js/reveal.js';
+
+  async function loadWedding() {
+    const res = await fetch('assets/data/wedding.json');
+    if (!res.ok) throw new Error(`failed to load wedding.json: ${res.status}`);
+    const { items } = await res.json();
+
+    const lingzheng = items.filter(i => i.category === '领证');
+    const wedding = items.filter(i => i.category === '婚礼');
+
+    function renderGrid(gridEl, list) {
+      list.forEach((it, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'gallery-item';
+        btn.dataset.lightboxIndex = String(i);
+        btn.setAttribute('aria-label', `查看大图：${it.alt}`);
+        btn.innerHTML = `<img src="${it.thumb}" srcset="${it.srcset}" sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw" alt="${it.alt}" loading="lazy" decoding="async" width="${it.width}" height="${it.height}">`;
+        gridEl.append(btn);
+      });
+      bindGallery(gridEl, list);
+      initReveal(gridEl);
+    }
+
+    renderGrid(document.getElementById('lingzheng-grid'), lingzheng);
+    renderGrid(document.getElementById('wedding-grid'), wedding);
+  }
+
+  loadWedding();
+</script>
+<!-- @include partials/footer.html -->
