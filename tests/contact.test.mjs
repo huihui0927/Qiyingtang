@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST, buildFeishuPost, signFeishu } from '../functions/api/contact.js';
+import { onRequestPost, buildFeishuPost, signFeishu } from '../functions/api/contact.js';
 
 function makeReq({ body, headers = {}, method = 'POST', url = 'https://x/api/contact' } = {}) {
   return {
@@ -57,7 +57,7 @@ describe('POST /api/contact', () => {
 
   it('rejects cross-origin', async () => {
     const req = makeReq({ body: { name:'a', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' }, headers: { origin: 'https://evil.com' } });
-    const res = await POST(req, { env: ENV });
+    const res = await onRequestPost({ request: req, env: ENV });
     expect(res.status).toBe(400);
     const j = await res.json();
     expect(j.ok).toBe(false);
@@ -66,7 +66,7 @@ describe('POST /api/contact', () => {
   it('silently accepts honeypot (returns 200 but does not forward)', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 0 }), { status: 200 }));
     const req = makeReq({ body: { name:'a', phone:'15210475723', date: futureDate(30), type:'portrait', message:'', website:'bot' } });
-    const res = await POST(req, { env: ENV });
+    const res = await onRequestPost({ request: req, env: ENV });
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
     expect(fetchSpy).not.toHaveBeenCalled();
@@ -74,7 +74,7 @@ describe('POST /api/contact', () => {
 
   it('rejects invalid payload with field errors', async () => {
     const req = makeReq({ body: { name:'', phone:'bad', date:'2020-01-01', type:'x', message:'' } });
-    const res = await POST(req, { env: ENV });
+    const res = await onRequestPost({ request: req, env: ENV });
     expect(res.status).toBe(400);
     const j = await res.json();
     expect(j.errors).toBeDefined();
@@ -84,7 +84,7 @@ describe('POST /api/contact', () => {
   it('forwards to feishu and returns ok', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 0, msg: 'success' }), { status: 200 }));
     const req = makeReq({ body: { name:'张三', phone:'15210475723', date: futureDate(30), type:'portrait', message:'hi' } });
-    const res = await POST(req, { env: ENV });
+    const res = await onRequestPost({ request: req, env: ENV });
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
     expect(fetchSpy).toHaveBeenCalledWith(ENV.FEISHU_WEBHOOK_URL, expect.objectContaining({ method: 'POST' }));
@@ -93,7 +93,7 @@ describe('POST /api/contact', () => {
   it('returns 502 when feishu replies non-zero after retry', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 19001, msg: 'sign error' }), { status: 200 }));
     const req = makeReq({ body: { name:'张三', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' } });
-    const res = await POST(req, { env: ENV });
+    const res = await onRequestPost({ request: req, env: ENV });
     expect(res.status).toBe(502);
   });
 
@@ -102,7 +102,7 @@ describe('POST /api/contact', () => {
       .mockResolvedValueOnce(new Response(JSON.stringify({ code: 19001, msg: 'temp error' }), { status: 200 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ code: 0 }), { status: 200 }));
     const req = makeReq({ body: { name:'张三', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' } });
-    const res = await POST(req, { env: ENV });
+    const res = await onRequestPost({ request: req, env: ENV });
     expect(res.status).toBe(200);
     expect(fetchSpy).toHaveBeenCalledTimes(2);
   });
@@ -110,7 +110,7 @@ describe('POST /api/contact', () => {
   it('signs when FEISHU_WEBHOOK_SECRET present', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 0 }), { status: 200 }));
     const req = makeReq({ body: { name:'张三', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' } });
-    const res = await POST(req, { env: { ...ENV, FEISHU_WEBHOOK_SECRET: 's3cr3t' } });
+    const res = await onRequestPost({ request: req, env: { ...ENV, FEISHU_WEBHOOK_SECRET: 's3cr3t' } });
     expect(res.status).toBe(200);
     const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
     expect(body.timestamp).toBeDefined();
@@ -120,7 +120,7 @@ describe('POST /api/contact', () => {
   it('reads CF-Connecting-IP and passes to buildFeishuPost', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 0 }), { status: 200 }));
     const req = makeReq({ body: { name:'张三', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' }, headers: { 'cf-connecting-ip': '203.0.113.42' } });
-    const res = await POST(req, { env: ENV });
+    const res = await onRequestPost({ request: req, env: ENV });
     expect(res.status).toBe(200);
     const body = JSON.parse(fetchSpy.mock.calls[0][1].body);
     const content = JSON.parse(body.content);
@@ -131,13 +131,13 @@ describe('POST /api/contact', () => {
   it('accepts name up to 30 chars', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify({ code: 0 }), { status: 200 }));
     const req = makeReq({ body: { name:'a'.repeat(30), phone:'15210475723', date: futureDate(30), type:'portrait', message:'' } });
-    const res = await POST(req, { env: ENV });
+    const res = await onRequestPost({ request: req, env: ENV });
     expect(res.status).toBe(200);
   });
 
   it('rejects name over 30 chars', async () => {
     const req = makeReq({ body: { name:'a'.repeat(31), phone:'15210475723', date: futureDate(30), type:'portrait', message:'' } });
-    const res = await POST(req, { env: ENV });
+    const res = await onRequestPost({ request: req, env: ENV });
     expect(res.status).toBe(400);
     const j = await res.json();
     expect(j.errors.name).toBeDefined();
@@ -146,9 +146,24 @@ describe('POST /api/contact', () => {
   it('rejects date > +365d', async () => {
     const farFuture = new Date(); farFuture.setDate(farFuture.getDate() + 400);
     const req = makeReq({ body: { name:'张三', phone:'15210475723', date: farFuture.toISOString().slice(0,10), type:'portrait', message:'' } });
-    const res = await POST(req, { env: ENV });
+    const res = await onRequestPost({ request: req, env: ENV });
     expect(res.status).toBe(400);
     const j = await res.json();
     expect(j.errors.date).toBeDefined();
+  });
+});
+
+describe('Pages Functions routing contract', () => {
+  it('exports onRequestPost / onRequestGet (method-based routing names)', async () => {
+    const mod = await import('../functions/api/contact.js');
+    expect(typeof mod.onRequestPost).toBe('function');
+    expect(typeof mod.onRequestGet).toBe('function');
+  });
+
+  it('handler takes a single context object { request, env }', async () => {
+    const mod = await import('../functions/api/contact.js');
+    const req = makeReq({ body: { name:'a', phone:'15210475723', date: futureDate(30), type:'portrait', message:'' }, headers: { origin: 'https://evil.com' } });
+    const res = await mod.onRequestPost({ request: req, env: ENV });
+    expect(res.status).toBe(400);
   });
 });

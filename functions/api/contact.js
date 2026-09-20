@@ -73,10 +73,11 @@ function sameOrigin(req) {
   return true;
 }
 
-export async function POST(req, ctx) {
+export async function onRequestPost(context) {
+  const req = context.request;
   try {
     if (!sameOrigin(req)) return json(400, { ok: false, error: 'origin' });
-    const env = ctx?.env || {};
+    const env = context.env || {};
     if (!env.FEISHU_WEBHOOK_URL) return json(500, { ok: false, error: 'misconfigured' });
 
     let body;
@@ -123,6 +124,6 @@ export async function POST(req, ctx) {
   }
 }
 
-export async function GET() {
+export async function onRequestGet() {
   return json(405, { ok: false, error: 'method-not-allowed' });
 }
