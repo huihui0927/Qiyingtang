@@ -30,9 +30,9 @@
   </section>
 </main>
 
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/lightbox.css">
-<link rel="stylesheet" href="assets/css/gallery.css">
+<link rel="stylesheet" href="assets/css/components.css?v=2">
+<link rel="stylesheet" href="assets/css/lightbox.css?v=2">
+<link rel="stylesheet" href="assets/css/gallery.css?v=2">
 <style>
   .wedding-section { margin-bottom: var(--space-6); }
   .section-header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
@@ -40,8 +40,8 @@
   .gold-line { flex: 1; height: 1px; background: var(--gold); opacity: 0.4; }
 </style>
 <script type="module">
-  import { openLightbox, bindGallery } from './assets/js/lightbox.js';
-  import { initReveal } from './assets/js/reveal.js';
+  import { openLightbox, bindGallery } from './assets/js/lightbox.js?v=2';
+  import { initReveal } from './assets/js/reveal.js?v=2';
 
   async function loadWedding() {
     const res = await fetch('assets/data/wedding.json');
