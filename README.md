@@ -9,7 +9,7 @@
 - sharp (图片处理)
 - fonttools + brotli (字体子集化，需 Python 3.10+)
 - Vitest + jsdom (前端 JS 单元测试)
-- Cloudflare Pages + Pages Functions (部署)
+- Cloudflare Pages + Pages Functions + D1 + R2 (部署与作品管理后台 CMS)
 
 ## 本地开发
 
@@ -37,21 +37,27 @@ qiyangtang-site/
 ├── wedding.html            婚礼摄影
 ├── event.html              活动摄影
 ├── booking.html            预约表单
+├── admin.html              作品管理后台 (CMS) → /admin
 ├── 404.html                404 页面
 ├── partials/               HTML 模板片段（head/nav/footer）
 ├── assets/
-│   ├── css/                样式（tokens/base/fonts/layout/components/lightbox/gallery/home/booking）
-│   ├── js/                 脚本（reveal/filter/lightbox/gallery/validate/booking）
+│   ├── css/                样式（…/home/admin）
+│   ├── js/                 脚本（…/gallery/home/admin）
 │   ├── images/             图片（process:images 生成）
 │   ├── fonts/              子集字体（subset:font 生成）
-│   └── data/               画廊 JSON（process:images 生成）
-├── functions/              Cloudflare Pages Functions
-│   └── api/contact.js      预约表单后端
+│   └── data/               画廊 JSON fallback（process:images 生成）
+├── functions/              Cloudflare Pages Functions（CMS 后端）
+│   ├── _middleware.js      统一鉴权
+│   ├── _lib.js             session/校验/工具
+│   └── api/                auth / gallery / photos / stories / home / upload / media / stats / contact
+├── schema.sql              D1 建表
+├── wrangler.toml           本地开发用 D1/R2/vars 绑定
 ├── scripts/                构建脚本
 │   ├── process-images.mjs  图片处理 + JSON 生成
 │   ├── subset-font.mjs     字体子集化
+│   ├── migrate-legacy.mjs  读 assets/data/*.json → 生成 legacy.sql（历史照片导入 D1）
 │   ├── build.mjs           站点构建
-│   └── dev.mjs             开发服务器
+│   └── dev.mjs             （旧）静态预览；新 dev 用 wrangler pages dev
 ├── tests/                  单元测试
 ├── _headers                缓存/安全头
 ├── _redirects              重定向规则
@@ -95,6 +101,89 @@ qiyangtang-site/
 
 **已处理图片的 git 策略**：由于 CI 无法访问 `~/Downloads/栖影堂`，`assets/images/` 和 `assets/fonts/*.woff2` 需要提交到 git。`.gitignore` 中这些路径已被注释掉或由 `.gitattributes` 管理。
 
+## 作品管理后台 (CMS)
+
+摄影师在 `/admin` 登录后台即可：**上传照片 → 浏览器内裁剪 → 建/改客片故事 → 选首页精选**，无需 Git / 编辑器 / 重新构建。后台是纯 Vanilla JS 单页应用，后端为 Cloudflare Pages Functions + D1（元数据）+ R2（图片），图片压缩/裁剪全部在浏览器完成。
+
+> **⚠️ 关于"免费"的如实说明**：本项目按 Cloudflare 免费额度设计，并用应用层限制**尽量避免**产生费用，但**不能保证永久零费用**。
+> - **R2 需要在 Cloudflare 账户绑定一张支付方式才能开通**（额度内金额为 0，但"绑卡"这一步无法绕过）。
+> - 免费额度：Pages Functions 10 万请求/天；D1 5GB 存储 + 每日大量免费读；R2 10GB 存储 + A 类 100 万 / B 类 1000 万次/月。正常个人工作室用量远低于这些。
+> - 应用层已设软上限：作品总数 `MAX_PHOTOS=1000`（超限拒绝新增）、单张 `MAX_UPLOAD_BYTES=20MB`、单次批量 `≤30` 张、概览页用量 80%/95% 预警。**这些是降低风险，不是账单硬上限**——请在 Cloudflare 账户侧自行设置用量提醒。
+
+### 架构与数据流
+
+```
+浏览器 Canvas/Cropper → WebP → POST /api/upload → R2(photos/{id}/…)
+                                                   ↓
+                POST /api/photos（仅元数据）→ D1   ← _middleware 鉴权(HttpOnly cookie)
+                                                   ↓
+前台：GET /api/gallery/{cat}、GET /api/home（失败→回落静态 assets/data/*.json）
+```
+
+- 图片只存 `image.webp`(≤2000px q0.85) + `thumbnail.webp`(≤600px q0.80)，不存原图。
+- R2 对象 key 由不可变 `id` 派生 → URL 永久缓存 `immutable`；改图=上传新 id+删旧，绝不覆盖旧 URL。
+- 线上图片建议走 **R2 公开域名**（`R2_PUBLIC_BASE`）直接由 CDN 提供，不经过 Worker，省 CPU/请求。
+
+### 集成边界（当前版本已完成 / 尚未接线）
+
+| 前台区块 | 数据源 | 状态 |
+|---|---|---|
+| 首页「客片故事」 | `GET /api/home`，失败回落静态 | ✅ CMS 驱动 |
+| 人像/婚礼/活动画廊页 | `GET /api/gallery/{cat}`，失败/空回落 `assets/data/*.json` | ✅ CMS 驱动 |
+| 首页 bento / hero / service 缩略图 | 静态资源 | ⏳ 未 CMS 化 |
+
+**画廊页数据流**：三张画廊页优先读 `/api/gallery/{cat}`（唯一来源，后台可增删改/隐藏/排序）；接口不可用、返回非 2xx 或 `items` 为空（如线上 D1 尚未迁移）时，自动回落历史静态 `assets/data/*.json`，保证站点永不空页。
+
+**历史照片迁移**：婚礼页"领证/婚礼"、人像页风格标签等旧 JSON 的 `category` 实为页内子标签，迁移时写入新列 `subcategory`，`/api/gallery` 再把它作为 `category` 返回，前端 `filter.js` / `wedding.html` 无需改动即可分组。旧图以 `source='site'` 入库（图片仍是 Pages 静态路径，不进 R2），新上传图为 `source='r2'`。步骤见下文「迁移历史照片」。
+
+### 本地跑通（需 Node 20+）
+
+```bash
+npm install                       # 首次会拉 wrangler 等
+npx wrangler login                # 浏览器授权你的 Cloudflare 账号
+
+# 建库（本地 SQLite + 本地 R2 模拟都在 .wrangler/ 里）
+npx wrangler d1 create qiyingtang          # 记下返回的 database_id → 填进 wrangler.toml
+npx wrangler r2 bucket create qiyingtang-media
+
+npm run db:migrate:local          # 把 schema.sql 应用到本地 D1
+npm run db:legacy:local           # 生成并导入历史照片（source='site'），让画廊/婚礼分组与线上现状一致
+
+cp .dev.vars.example .dev.vars    # 填 ADMIN_PASSWORD（自定）与 SESSION_SECRET（随机串）
+# SESSION_SECRET 生成：node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+npm run dev                       # = build + `wrangler pages dev dist`，打开 http://localhost:8788/admin
+```
+
+在 `/admin` 用 `ADMIN_PASSWORD` 登录即可试上传/裁剪/建故事/设首页。本地未配 `R2_PUBLIC_BASE` 时，图片经 `/api/media/...` 代理显示。
+
+### 上线部署（Cloudflare 控制台，点选式）
+
+1. **建 D1**：Dashboard → Workers & Pages → **D1** → Create database → 名称 `qiyingtang` → 复制 `database_id` 填进 `wrangler.toml`（本地用；线上在下一步绑定）。
+2. **建 R2**：Dashboard → **R2** → Create bucket → 名称 `qiyingtang-media`（**需先在该页绑定支付方式才能开通**，额度内不扣费）。
+3. **开 R2 公开访问**（线上图片绕过 Worker）：R2 → 你的 bucket → **Settings** → Public development URL 开启（或用"Custom domain"绑你自己的子域），复制该公开域名（形如 `https://pub-xxxx.r2.dev`）。
+4. **配 Pages 绑定**：Pages 项目 → Settings → **Functions** → Add bindings：
+   - D1 → 变量名 `DB` → 选 `qiyingtang`
+   - R2 → 变量名 `MEDIA` → 选 `qiyingtang-media`
+5. **配环境变量**（同页 Environment variables / Secrets）：
+   - Secret：`ADMIN_PASSWORD`、`SESSION_SECRET`、（已有的 `FEISHU_WEBHOOK_URL`）
+   - Variable（非机密）：`R2_PUBLIC_BASE` = 第 3 步公开域名；`MAX_PHOTOS` `1000`；`MAX_UPLOAD_BYTES` `20971520`
+6. **迁移表结构到线上 D1**：`npm run db:migrate:remote`（或 D1 控制台 Console 里粘贴 `schema.sql` 执行）。
+7. **迁移历史照片**：`npm run db:legacy:remote`（先本地生成 `legacy.sql` 再导入线上 D1）。这一步把现有 102 张静态图以 `source='site'` 写入 photos 表，之后画廊页即由 `/api/gallery` 供数、后台可管理。**若不执行此步，画廊页会自动回落静态 JSON，站点照常显示。**
+8. **推送部署**：`git add -A && git commit && git push` → Pages 自动 `npm run build` 并带上 `functions/`。
+9. 访问 `https://<你的域名>/admin` 登录后台。
+
+### 后台安全要点
+
+- 单管理员、无注册、无 RBAC；密码只存 Cloudflare Secret，绝不入库/入代码/入 Git。
+- 会话为 HMAC 签名的 HttpOnly / Secure / SameSite=Lax cookie（7 天），无状态不需 KV。
+- 登录接口按 IP 内存限流：5 次失败锁 ~15 分钟（尽力而为，每 isolate 计数）。
+- 所有 SQL 参数化；上传服务端校验 WebP 魔数+大小+合法 id；后台所有用户文本渲染前转义（防 XSS）；`/admin` 带 `noindex`。
+
+### 如何回滚 CMS
+
+删除 `admin.html`、`assets/css/admin.css`、`assets/js/admin.js`、`assets/js/home.js`，还原 `index.html`、`package.json`、`schema.sql`、`wrangler.toml` 与 `functions/` 下新增文件即可。前台在兜底逻辑下不受影响；D1/R2 可在 Cloudflare 控制台随时删除。
+
 ## 测试
 
 ```bash
@@ -114,10 +203,10 @@ npm run test:watch  # 监听模式
 ## 已知限制（V1）
 
 - 无 IP 频率限制（honeypot + Origin 校验已足够）
-- 无后台管理（内容更新通过本地文件 + git）
+- 后台管理见上文「作品管理后台 (CMS)」；画廊页（人像/婚礼/活动）已接 `/api/gallery`，D1 未迁移或接口失败时回落静态 `assets/data/*.json`
 - 无多语言（仅中文）
-- 图片按字母序排列（非时间/叙事序）
-- 画廊分类标签为占位文字（人像/活动页），可在 `assets/data/*.json` 中手动编辑
+- 图片按字母序排列（非时间/叙事序）；迁移后在后台按 `sort_order` 排序，可在「作品管理」调整
+- 页内子分类/标签（人像风格、婚礼的"领证/婚礼"）现由 photos 表 `subcategory` 列承载，可在后台「子分类/标签」字段编辑；旧值由迁移脚本从 `assets/data/*.json` 导入
 
 
 # 免责声明 | Disclaimer

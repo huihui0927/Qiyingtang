@@ -1,0 +1,24 @@
+#:schema node_modules/wrangler/config-schema.json
+# 本地开发用：npx wrangler pages dev dist
+# 线上 Pages：Settings → Functions 里同样配 D1/R2 绑定与 Secret（Pages 以 dashboard 绑定为准）。
+name = "qiyingtang-cms"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "dist"
+
+# D1 —— 只存元数据（免费额度：5GB 存储 / 读多写少）
+[[d1_databases]]
+binding = "DB"
+database_name = "qiyingtang"
+database_id = "REPLACE_WITH_D1_ID"   # 创建后由 `wrangler d1 create qiyingtang` 输出填入
+
+# R2 —— 图片二进制（免费额度：10GB 存储 / A 100万 / B 1000万次；开通需绑卡但额度内为 0）
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "qiyingtang-media"
+
+# 非机密变量。机密（ADMIN_PASSWORD / SESSION_SECRET）走 .dev.vars(本地) 与 Pages Secret(线上)，绝不写这里。
+[vars]
+MAX_PHOTOS = "1000"          # 作品总数软上限
+MAX_UPLOAD_BYTES = "20971520"  # 单张 ≤ 20MB
+MAX_BATCH = "30"             # 单次批量 ≤ 30
+R2_PUBLIC_BASE = ""          # R2 公开 dev 域名，如 https://pub-xxxx.r2.dev（线上必填）

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>栖影堂 · 作品管理后台</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#14120F">
+<link rel="preconnect" href="https://fonts.loli.net" crossorigin>
+<link rel="stylesheet" href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;500;700&family=Cormorant+Garamond:ital@0;1&display=swap">
+<!-- Cropper.js（MIT，CDN 引入，免打包） -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.2.2/dist/cropper.min.css">
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.2.2/dist/cropper.min.js"></script>
+<link rel="stylesheet" href="assets/css/tokens.css?v=2">
+<link rel="stylesheet" href="assets/css/admin.css?v=1">
+</head>
+<body>
+
+<!-- 登录门 -->
+<div class="login-wrap" id="login-view">
+  <form class="login-card" id="login-form">
+    <div class="seal">栖</div>
+    <h1>栖影堂 · 管理后台</h1>
+    <div class="field" style="text-align:left">
+      <label for="pw">管理员密码</label>
+      <input class="input" id="pw" type="password" autocomplete="current-password" required>
+    </div>
+    <button class="btn btn-primary" type="submit" style="width:100%;justify-content:center">登录</button>
+    <p class="hint" id="login-msg" style="color:var(--admin-accent);font-size:.85rem;min-height:1.2em;margin:.75rem 0 0"></p>
+  </form>
+</div>
+
+<!-- 后台主体 -->
+<div class="admin" id="app" hidden>
+  <aside class="sidebar">
+    <div class="brand">栖影堂<small>QIYingtang CMS</small></div>
+    <a class="nav-item" href="#dashboard" data-nav="dashboard">▦ 概览</a>
+    <a class="nav-item" href="#photos" data-nav="photos">❏ 作品管理</a>
+    <a class="nav-item" href="#stories" data-nav="stories">✎ 客片故事</a>
+    <a class="nav-item" href="#homepage" data-nav="homepage">★ 首页精选</a>
+    <div class="spacer"></div>
+    <button class="nav-item" id="logout-btn" type="button">⏻ 退出登录</button>
+  </aside>
+  <main class="main" id="view"></main>
+</div>
+
+<script type="module" src="assets/js/admin.js?v=1"></script>
+</body>
+</html>

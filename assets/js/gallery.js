@@ -2,10 +2,26 @@ import { initFilter } from './filter.js';
 import { bindGallery } from './lightbox.js';
 import { initReveal } from './reveal.js';
 
-export async function mountGallery({ mountEl, filterEl, dataUrl, emptyText = '暂无作品' }) {
+// 画廊数据加载：优先后台 API（/api/gallery/{cat}，唯一来源），
+// 若接口不可用 / 返回非 2xx / items 为空（如线上 D1 尚未迁移）→ 回落历史静态 JSON。
+export async function fetchGallery({ apiUrl, dataUrl }) {
+  if (apiUrl) {
+    try {
+      const res = await fetch(apiUrl, { credentials: 'same-origin' });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.items) && data.items.length) return data.items;
+      }
+    } catch (_) { /* 网络或解析失败，走回落 */ }
+  }
   const res = await fetch(dataUrl);
   if (!res.ok) throw new Error(`failed to load ${dataUrl}: ${res.status}`);
   const { items } = await res.json();
+  return items;
+}
+
+export async function mountGallery({ mountEl, filterEl, apiUrl, dataUrl, emptyText = '暂无作品' }) {
+  const items = await fetchGallery({ apiUrl, dataUrl });
 
   function render(list) {
     mountEl.innerHTML = '';

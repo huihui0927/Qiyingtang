@@ -42,13 +42,12 @@
 <script type="module">
   import { openLightbox, bindGallery } from './assets/js/lightbox.js?v=2';
   import { initReveal } from './assets/js/reveal.js?v=2';
+  import { fetchGallery } from './assets/js/gallery.js?v=2';
 
   initReveal();
 
   async function loadWedding() {
-    const res = await fetch('assets/data/wedding.json');
-    if (!res.ok) throw new Error(`failed to load wedding.json: ${res.status}`);
-    const { items } = await res.json();
+    const items = await fetchGallery({ apiUrl: '/api/gallery/wedding', dataUrl: 'assets/data/wedding.json' });
 
     const lingzheng = items.filter(i => i.category === '领证');
     const wedding = items.filter(i => i.category === '婚礼');

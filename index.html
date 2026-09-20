@@ -106,18 +106,20 @@
 
   <section class="container client-story" data-reveal>
     <div class="section-title"><h2>客片故事</h2><span class="en" lang="en">Client Stories</span></div>
-    <article class="story-feature">
-      <div class="story-feature-media">
-        <img src="assets/images/wedding/1040g008322p5b4i9nalg5n96ifr4mm5c76e7m6o.webp" alt="一场秋日婚礼的外景记录" width="1333" height="2000" loading="lazy">
-      </div>
-      <div class="story-feature-text">
-        <span class="issue" lang="en">01</span>
-        <h3 lang="zh-CN">林先生 <span class="x" lang="en">×</span> 王小姐</h3>
-        <p class="meta">秋日外景婚礼 · 全天纪实</p>
-        <p class="lede">一场关于风、阳光和爱的记录。</p>
-        <a class="view-story" href="wedding.html"><span lang="en">View Story</span> →</a>
-      </div>
-    </article>
+    <div id="client-stories">
+      <article class="story-feature">
+        <div class="story-feature-media">
+          <img src="assets/images/wedding/1040g008322p5b4i9nalg5n96ifr4mm5c76e7m6o.webp" alt="一场秋日婚礼的外景记录" width="1333" height="2000" loading="lazy">
+        </div>
+        <div class="story-feature-text">
+          <span class="issue" lang="en">01</span>
+          <h3 lang="zh-CN">林先生 <span class="x" lang="en">×</span> 王小姐</h3>
+          <p class="meta">秋日外景婚礼 · 全天纪实</p>
+          <p class="lede">一场关于风、阳光和爱的记录。</p>
+          <a class="view-story" href="wedding.html"><span lang="en">View Story</span> →</a>
+        </div>
+      </article>
+    </div>
   </section>
 
   <section class="closing-cta" data-reveal>
@@ -140,8 +142,10 @@
   import { initReveal } from './assets/js/reveal.js?v=2';
   import { openLightbox } from './assets/js/lightbox.js?v=2';
   import { initCarousel } from './assets/js/carousel.js?v=2';
+  import { initHomeCMS } from './assets/js/home.js?v=1';
   initReveal();
   initCarousel(document.querySelector('[data-carousel]'), document.querySelector('[data-carousel-dots]'), { interval: 2000 });
+  initHomeCMS();
 
   const bentoItems = [
     {

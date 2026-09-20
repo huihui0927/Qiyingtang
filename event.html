@@ -34,7 +34,7 @@
   const filterEl = document.getElementById('event-filter');
   const gridEl = document.getElementById('event-grid');
   const countEl = document.getElementById('event-count');
-  mountGallery({ mountEl: gridEl, filterEl, dataUrl: 'assets/data/event.json' });
+  mountGallery({ mountEl: gridEl, filterEl, apiUrl: '/api/gallery/event', dataUrl: 'assets/data/event.json' });
   filterEl.addEventListener('click', () => {
     setTimeout(() => {
       const n = gridEl.querySelectorAll('.gallery-item').length;

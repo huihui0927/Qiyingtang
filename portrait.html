@@ -34,7 +34,7 @@
   const filterEl = document.getElementById('portrait-filter');
   const gridEl = document.getElementById('portrait-grid');
   const countEl = document.getElementById('portrait-count');
-  mountGallery({ mountEl: gridEl, filterEl, dataUrl: 'assets/data/portrait.json' });
+  mountGallery({ mountEl: gridEl, filterEl, apiUrl: '/api/gallery/portrait', dataUrl: 'assets/data/portrait.json' });
   filterEl.addEventListener('click', () => {
     setTimeout(() => {
       const n = gridEl.querySelectorAll('.gallery-item').length;

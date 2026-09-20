@@ -7,3 +7,6 @@ dist/
 .env.local
 .superpowers/
 .dev.vars
+
+# 迁移生成的历史照片 SQL（可由 npm run db:legacy 从 assets/data/*.json 重新生成）
+legacy.sql

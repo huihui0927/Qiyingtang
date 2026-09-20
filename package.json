@@ -7,7 +7,13 @@
     "process:images": "node scripts/process-images.mjs",
     "subset:font": "node scripts/subset-font.mjs",
     "build": "node scripts/build.mjs",
-    "dev": "node scripts/dev.mjs",
+    "dev": "node scripts/build.mjs && wrangler pages dev dist",
+    "db:migrate:local": "wrangler d1 execute qiyingtang --local --file=./schema.sql",
+    "db:migrate:remote": "wrangler d1 execute qiyingtang --remote --file=./schema.sql",
+    "db:legacy": "node scripts/migrate-legacy.mjs",
+    "db:legacy:local": "node scripts/migrate-legacy.mjs && wrangler d1 execute qiyingtang --local --file=./legacy.sql",
+    "db:legacy:remote": "node scripts/migrate-legacy.mjs && wrangler d1 execute qiyingtang --remote --file=./legacy.sql",
+    "deploy": "wrangler pages deploy dist",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -16,6 +22,7 @@
     "cn-font-split": "^4.5.0",
     "vitest": "^2.1.0",
     "jsdom": "^25.0.0",
-    "chokidar": "^3.6.0"
+    "chokidar": "^3.6.0",
+    "wrangler": "^3.100.0"
   }
 }
