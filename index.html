@@ -11,11 +11,11 @@
   <section class="hero">
     <div class="hero-media" aria-hidden="true">
       <div class="hero-slides" data-carousel>
-        <img class="hero-slide is-active" src="assets/images/home/hero-1.webp" alt="" width="1920" height="1200" fetchpriority="high">
-        <img class="hero-slide" src="assets/images/home/hero-2.webp" alt="" width="2000" height="1125" loading="lazy">
-        <img class="hero-slide" src="assets/images/home/hero-3.webp" alt="" width="1417" height="770" loading="lazy">
-        <img class="hero-slide" src="assets/images/home/hero-4.webp" alt="" width="1620" height="1080" loading="lazy">
-        <img class="hero-slide" src="assets/images/home/hero-5.webp" alt="" width="1620" height="1080" loading="lazy">
+        <img class="hero-slide is-active" src="assets/images/home/hero-1.webp" alt="" width="1920" height="1080" fetchpriority="high">
+        <img class="hero-slide" src="assets/images/home/hero-2.webp" alt="" width="1920" height="1080" loading="lazy">
+        <img class="hero-slide" src="assets/images/home/hero-3.webp" alt="" width="1920" height="1080" loading="lazy">
+        <img class="hero-slide" src="assets/images/home/hero-4.webp" alt="" width="1920" height="1080" loading="lazy">
+        <img class="hero-slide" src="assets/images/home/hero-5.webp" alt="" width="1920" height="1080" loading="lazy">
       </div>
       <div class="hero-shade"></div>
     </div>
@@ -141,7 +141,7 @@
   import { openLightbox } from './assets/js/lightbox.js';
   import { initCarousel } from './assets/js/carousel.js';
   initReveal();
-  initCarousel(document.querySelector('[data-carousel]'), document.querySelector('[data-carousel-dots]'));
+  initCarousel(document.querySelector('[data-carousel]'), document.querySelector('[data-carousel-dots]'), { interval: 2000 });
 
   const bentoItems = [
     {

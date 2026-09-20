@@ -19,7 +19,7 @@
   object-fit: cover;
   opacity: 0;
   transform: scale(1);
-  transition: opacity 1.6s ease;
+  transition: opacity 0.9s ease;
 }
 .hero-slide.is-active {
   opacity: 1;
@@ -382,13 +382,13 @@
   .hero-cue { animation-delay: 1.4s; }
   .hero-cue::after { transform-origin: top; animation: cue-draw 2.6s ease-in-out 2s infinite; }
   .hero-slide { transition: none; }
-  .hero-slide.is-active { animation: slide-breathe 7.5s ease both; }
+  .hero-slide.is-active { animation: slide-breathe 3s ease both; }
   .story-feature-media img { animation: settle 1.2s ease both; }
 }
 @keyframes slide-breathe {
   from { opacity: 0; transform: scale(1); }
-  22% { opacity: 1; }
-  to { opacity: 1; transform: scale(1.05); }
+  30% { opacity: 1; }
+  to { opacity: 1; transform: scale(1.04); }
 }
 @keyframes ink-rise {
   from { opacity: 0; transform: translateY(24px); }
