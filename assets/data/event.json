@@ -1,17 +1,6 @@
 {
   "items": [
     {
-      "id": "5b89a7c689918f17caffac3ae4336f67",
-      "src": "assets/images/event/5b89a7c689918f17caffac3ae4336f67.webp",
-      "srcset": "assets/images/event/5b89a7c689918f17caffac3ae4336f67-thumb.webp 800w, assets/images/event/5b89a7c689918f17caffac3ae4336f67.webp 2000w",
-      "fallback": "assets/images/event/5b89a7c689918f17caffac3ae4336f67.jpg",
-      "thumb": "assets/images/event/5b89a7c689918f17caffac3ae4336f67-thumb.webp",
-      "width": 640,
-      "height": 580,
-      "alt": "活动摄影 作品 1",
-      "category": "企业活动"
-    },
-    {
       "id": "CLL_2044-opq3059444369",
       "src": "assets/images/event/CLL_2044-opq3059444369.webp",
       "srcset": "assets/images/event/CLL_2044-opq3059444369-thumb.webp 800w, assets/images/event/CLL_2044-opq3059444369.webp 2000w, assets/images/event/CLL_2044-opq3059444369@2x.webp 2800w",
