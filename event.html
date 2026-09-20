@@ -27,6 +27,10 @@
 <link rel="stylesheet" href="assets/css/gallery.css?v=2">
 <script type="module">
   import { mountGallery } from './assets/js/gallery.js?v=2';
+  import { initReveal } from './assets/js/reveal.js?v=2';
+
+  initReveal();
+
   const filterEl = document.getElementById('event-filter');
   const gridEl = document.getElementById('event-grid');
   const countEl = document.getElementById('event-count');

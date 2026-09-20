@@ -43,6 +43,8 @@
   import { openLightbox, bindGallery } from './assets/js/lightbox.js?v=2';
   import { initReveal } from './assets/js/reveal.js?v=2';
 
+  initReveal();
+
   async function loadWedding() {
     const res = await fetch('assets/data/wedding.json');
     if (!res.ok) throw new Error(`failed to load wedding.json: ${res.status}`);

@@ -27,6 +27,10 @@
 <link rel="stylesheet" href="assets/css/gallery.css?v=2">
 <script type="module">
   import { mountGallery } from './assets/js/gallery.js?v=2';
+  import { initReveal } from './assets/js/reveal.js?v=2';
+
+  initReveal();
+
   const filterEl = document.getElementById('portrait-filter');
   const gridEl = document.getElementById('portrait-grid');
   const countEl = document.getElementById('portrait-count');
