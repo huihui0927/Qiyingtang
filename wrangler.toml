@@ -9,7 +9,7 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "qiyingtang"
-database_id = "REPLACE_WITH_D1_ID"   # 创建后由 `wrangler d1 create qiyingtang` 输出填入
+database_id = "87250229-984f-42f2-a7d7-907b6e004edb"   # D1 控制台 → qiyingtang 概览页 Database ID
 
 # R2 —— 图片二进制（免费额度：10GB 存储 / A 100万 / B 1000万次；开通需绑卡但额度内为 0）
 [[r2_buckets]]
@@ -21,4 +21,4 @@ bucket_name = "qiyingtang-media"
 MAX_PHOTOS = "1000"          # 作品总数软上限
 MAX_UPLOAD_BYTES = "20971520"  # 单张 ≤ 20MB
 MAX_BATCH = "30"             # 单次批量 ≤ 30
-R2_PUBLIC_BASE = ""          # R2 公开 dev 域名，如 https://pub-xxxx.r2.dev（线上必填）
+R2_PUBLIC_BASE = "https://pub-279a756fbcdd4f64bbc5d5673c8ca61d.r2.dev"  # R2 公开 dev 域名（线上图片走它，绕过 Worker）
