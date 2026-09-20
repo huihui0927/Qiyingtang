@@ -33,8 +33,10 @@ describe('carousel', () => {
     initCarousel(slidesEl, dotsEl, { interval: 6000 });
     vi.advanceTimersByTime(6000);
     expect(activeIdx()).toBe(1);
+    expect(slidesEl.style.transform).toBe('translateX(-100%)');
     vi.advanceTimersByTime(12000);
     expect(activeIdx()).toBe(0);
+    expect(slidesEl.style.transform).toBe('translateX(-0%)');
   });
   it('clicking a dot jumps to that slide', () => {
     const { slidesEl, dotsEl } = mount();

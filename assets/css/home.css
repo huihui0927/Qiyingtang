@@ -12,18 +12,16 @@
   color: var(--paper);
 }
 .hero-media { position: absolute; inset: 0; }
-.hero-slides { position: absolute; inset: 0; }
-.hero-slide {
+.hero-slides {
   position: absolute; inset: 0;
+  display: flex;
+  transition: transform 0.8s cubic-bezier(0.33, 0.1, 0.25, 1);
+  will-change: transform;
+}
+.hero-slide {
+  flex: 0 0 100%;
   width: 100%; height: 100%;
   object-fit: cover;
-  opacity: 0;
-  transform: scale(1);
-  transition: opacity 0.9s ease;
-}
-.hero-slide.is-active {
-  opacity: 1;
-  transform-origin: center;
 }
 .hero-shade {
   position: absolute; inset: 0;
@@ -381,14 +379,12 @@
   .hero-cta { animation-delay: 0.9s; }
   .hero-cue { animation-delay: 1.4s; }
   .hero-cue::after { transform-origin: top; animation: cue-draw 2.6s ease-in-out 2s infinite; }
-  .hero-slide { transition: none; }
   .hero-slide.is-active { animation: slide-breathe 3s ease both; }
   .story-feature-media img { animation: settle 1.2s ease both; }
 }
 @keyframes slide-breathe {
-  from { opacity: 0; transform: scale(1); }
-  30% { opacity: 1; }
-  to { opacity: 1; transform: scale(1.04); }
+  from { transform: scale(1); }
+  to { transform: scale(1.04); }
 }
 @keyframes ink-rise {
   from { opacity: 0; transform: translateY(24px); }

@@ -20,13 +20,9 @@ export function initCarousel(slidesEl, dotsEl, { interval = 6000 } = {}) {
   }
 
   function show(i) {
-    if (current >= 0) slides[current].classList.remove('is-active');
     current = (i + slides.length) % slides.length;
-    // 重触发 slide-breathe 动画
-    const el = slides[current];
-    el.classList.remove('is-active');
-    void el.offsetWidth;
-    el.classList.add('is-active');
+    slidesEl.style.transform = `translateX(-${current * 100}%)`;
+    slides.forEach((s, j) => s.classList.toggle('is-active', j === current));
     dots.forEach((d, j) => d.setAttribute('aria-selected', String(j === current)));
   }
 
