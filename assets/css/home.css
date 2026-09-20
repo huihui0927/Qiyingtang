@@ -129,6 +129,11 @@
 }
 .bento-lg { grid-column: span 8; grid-row: span 4; }
 .bento-sm { grid-column: span 4; }
+@media (max-width: 899px) {
+  .bento { grid-template-columns: 1fr 1fr; grid-auto-rows: 9rem; }
+  .bento-lg { grid-column: 1 / -1; grid-row: span 2; }
+  .bento-sm { grid-column: span 1; grid-row: span 2; }
+}
 @media (min-width: 900px) {
   .bento { grid-auto-rows: 13.5rem; }
 }
