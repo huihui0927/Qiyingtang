@@ -11,3 +11,6 @@ dist/
 # 迁移生成的历史照片 SQL（可由 npm run db:legacy 从 assets/data/*.json 重新生成）
 legacy.sql
 migrate-all.sql
+
+# 个人操作手册（仅本地参考，不上传）
+docs/操作手册.md

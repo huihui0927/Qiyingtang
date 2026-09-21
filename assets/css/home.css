@@ -43,7 +43,6 @@
   margin: 0;
 }
 .hero-title {
-  font-family: var(--font-brush);
   font-size: clamp(3.25rem, 11vw, 6rem); /* 96px 桌面封顶 */
   line-height: 1.15;
   letter-spacing: .08em;
@@ -256,7 +255,6 @@
   letter-spacing: .08em;
 }
 .story-text blockquote {
-  font-family: var(--font-brush);
   font-size: clamp(1.5rem, 3.2vw, 2.1rem);
   line-height: 1.5;
   color: var(--ink);
@@ -346,8 +344,6 @@
 .closing-cta::before { top: 0; }
 .closing-cta::after { bottom: 0; }
 .closing-title {
-  font-family: var(--font-brush);
-  font-weight: 400;
   font-size: clamp(1.9rem, 4.5vw, 2.9rem);
   color: var(--ink);
   margin-bottom: var(--space-4);

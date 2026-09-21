@@ -29,3 +29,23 @@ p { margin: 0 0 var(--space-3); }
 .container { width: min(100% - 2rem, 1200px); margin-inline: auto; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 :focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+
+/* ── 艺术字（字魂龙吟手书）唯一入口 ─────────────────────────
+   这份选择器清单就是「什么算艺术字」的定义，不要在别处再写 font-family: var(--font-brush)。
+   font-weight 必须锁 400：子集只有一个字重，继承来的 500 会触发浏览器伪粗，毛笔笔画会糊。
+   新增条目后同步 scripts/brush-text.txt 并跑 npm run subset:font，否则缺字会静默回退成楷体
+   （--font-brush 的回退链第二位是 LXGW WenKai）。tests/brush-charset.test.mjs 会拦这件事。 */
+.brand-cn,
+.hero-title,
+.section-title h2,
+.gallery-page-header h1,
+.section-header h2,
+.service-body h3,
+.story-text blockquote,
+.closing-title,
+.footer-slogan {
+  font-family: var(--font-brush);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: .06em;
+}
