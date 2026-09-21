@@ -3,6 +3,7 @@
 // 直接用楷体画出来——首页 hero 和页脚标语曾经是同一句话两种字，就是这个静默降级。
 // 本测试把「base.css 的艺术字清单」和「scripts/brush-text.txt（子集来源）」钉在一起校验。
 import { readFile, readdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -102,5 +103,18 @@ describe('艺术字（字魂龙吟手书）', () => {
       const missing = [...new Set(texts.flatMap(t => glyphChars(toText(t))))].filter(c => !subset.has(c));
       expect(missing, `${sel} 的文字「${missing.join('')}」不在 scripts/brush-text.txt 里，会静默降级成楷体`).toEqual([]);
     }
+  });
+
+  // Pages 用 max-age=31536000, immutable 发字体：URL 不变，老访客就永远拿旧子集，
+  // 新加的艺术字对他们仍是楷体。node scripts/subset-zihun.mjs 会把内容哈希写进 fonts.css，这里守住它。
+  it('fonts.css 的字体版本号对得上当前子集内容', async () => {
+    const [css, woff2] = await Promise.all([
+      readFile(join(CSS_FILES, 'fonts.css'), 'utf8'),
+      readFile(join(ROOT, 'assets', 'fonts', 'zihun-longyin-shushu-subset.woff2')),
+    ]);
+    const expected = createHash('sha256').update(woff2).digest('hex').slice(0, 8);
+    const m = css.match(/zihun-longyin-shushu-subset\.woff2\?v=([0-9a-f]+)["']/);
+    expect(m, 'fonts.css 里 zihun 的 src 少了 ?v= 版本号，跑一次 npm run subset:font').toBeTruthy();
+    expect(m[1], `子集已重新生成但 fonts.css 还是旧版本号，老访客会拿到过期字体`).toBe(expected);
   });
 });

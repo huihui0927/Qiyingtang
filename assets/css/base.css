@@ -33,7 +33,7 @@ p { margin: 0 0 var(--space-3); }
 /* ── 艺术字（字魂龙吟手书）唯一入口 ─────────────────────────
    这份选择器清单就是「什么算艺术字」的定义，不要在别处再写 font-family: var(--font-brush)。
    font-weight 必须锁 400：子集只有一个字重，继承来的 500 会触发浏览器伪粗，毛笔笔画会糊。
-   新增条目后同步 scripts/brush-text.txt 并跑 npm run subset:font，否则缺字会静默回退成楷体
+   新增条目后同步 scripts/brush-text.txt 并跑 node scripts/subset-zihun.mjs，否则缺字会静默回退成楷体
    （--font-brush 的回退链第二位是 LXGW WenKai）。tests/brush-charset.test.mjs 会拦这件事。 */
 .brand-cn,
 .hero-title,

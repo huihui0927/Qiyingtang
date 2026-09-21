@@ -18,7 +18,7 @@
    Generate with: node scripts/subset-zihun.mjs */
 @font-face {
   font-family: "ZiHun Longyin Shu";
-  src: url("../fonts/zihun-longyin-shushu-subset.woff2") format("woff2");
+  src: url("../fonts/zihun-longyin-shushu-subset.woff2?v=3aa06e2a") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
