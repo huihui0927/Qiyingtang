@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
-// 首页「精选作品」图片墙：行分配 + 后台数据/静态兜底两条渲染路径。
-// 关注点是「8~14 张不许出现半行空白」和「后台挂了首页照样有图」，这两件事一旦回归没人会肉眼发现。
+// 首页两处 CMS 区块：「精选作品」图片墙 + 「客片故事」卡片，都走 initHomeCMS。
+// 关注点是「8~14 张不许出现半行空白」和「后台挂了首页照样有图有故事」，这两件事一旦回归没人会肉眼发现。
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { perRowFor, bentoRows } from '../assets/js/home.js';
 
@@ -8,7 +8,7 @@ const STATIC_HTML = `<div class="bento" id="bento">
   <button class="bento-cell bento-lg" type="button"><img src="w-thumb.webp" data-full="w.webp" alt="婚礼纪实" width="1920" height="1280"><span class="bento-cap"><span class="cap-year">2026</span> 婚礼全天纪实</span></button>
   <button class="bento-cell bento-sm" type="button"><img src="p-thumb.webp" data-full="p.webp" alt="人像写真" width="1280" height="1920"><span class="bento-cap">人像写真</span></button>
   <button class="bento-cell bento-sm" type="button"><img src="e-thumb.webp" data-full="e.webp" alt="活动纪实" width="2000" height="1334"><span class="bento-cap">品牌活动</span></button>
-</div><div id="client-stories"></div>`;
+</div><div class="story-cards" id="client-stories">${['w', 'p', 'e'].map(k => `<article class="story-card"><div class="story-card-media"><img src="${k}-thumb.webp" alt="${k}"></div><div class="story-card-body"><span class="issue">2025.01</span><h3>静态兜底</h3><a class="view-story" href="index.html">View Story</a></div></article>`).join('')}</div>`;
 
 function apiResponse(data) {
   globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => data });
@@ -101,5 +101,49 @@ describe('bento 渲染', () => {
     await initHomeCMS();
     expect(document.querySelector('#bento .bento-cap').textContent).toBe('<img src=x onerror=alert(1)>');
     expect(document.querySelectorAll('#bento .bento-cap img')).toHaveLength(0);
+  });
+});
+
+const cmsStory = (i, extra = {}) => ({
+  id: `s${i}`, slug: `s${i}`, title: `故事 ${i}`, subtitle: '全天纪实', location: '北京',
+  cover: `https://cdn.example/stories/s${i}/cover.webp`, category: 'wedding',
+  description: '一句话简介', shoot_date: `2025.0${i}`, is_published: true, ...extra,
+});
+
+describe('客片故事卡', () => {
+  beforeEach(() => {
+    document.body.innerHTML = STATIC_HTML;
+  });
+
+  it('后台返回几条就渲染几张卡，链接按分类落到对应画廊页', async () => {
+    const { initHomeCMS } = await import('../assets/js/home.js');
+    apiResponse({ photos: [], stories: [
+      cmsStory(1), cmsStory(2, { category: 'portrait' }), cmsStory(3, { category: 'event' }),
+    ] });
+    await initHomeCMS();
+
+    const cards = [...document.querySelectorAll('#client-stories .story-card')];
+    expect(cards).toHaveLength(3);
+    expect(cards.map(c => c.querySelector('.view-story').getAttribute('href')))
+      .toEqual(['wedding.html', 'portrait.html', 'event.html']);
+    expect(cards[0].querySelector('.issue').textContent).toBe('2025.01');
+    expect(cards[0].querySelector('.meta').textContent).toBe('全天纪实 · 北京');
+    expect(cards[0].querySelector('img').getAttribute('src')).toContain('cover.webp');
+  });
+
+  it('简介和标题填成同一句话时不再重复渲染 lede', async () => {
+    const { initHomeCMS } = await import('../assets/js/home.js');
+    apiResponse({ photos: [], stories: [cmsStory(1, { title: '张先生 × 李小姐', description: '张先生 × 李小姐' })] });
+    await initHomeCMS();
+    const card = document.querySelector('#client-stories .story-card');
+    expect(card.querySelector('.lede')).toBeNull();
+    expect(card.querySelector('h3').textContent).toBe('张先生 × 李小姐');
+  });
+
+  it('接口挂了保留 index.html 里写死的 3 张静态卡', async () => {
+    const { initHomeCMS } = await import('../assets/js/home.js');
+    globalThis.fetch = vi.fn().mockRejectedValue(new Error('offline'));
+    await initHomeCMS();
+    expect(document.querySelectorAll('#client-stories .story-card')).toHaveLength(3);
   });
 });

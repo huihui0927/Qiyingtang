@@ -71,19 +71,23 @@ addEventListener('resize', () => {
   if (box && perRowFor(innerWidth) !== bentoPerRow) drawBento(box);
 });
 
-// —— 客片故事 ——
-function feature(s, i) {
+// —— 客片故事：三列卡片 ——
+function storyCard(s, i) {
   const issue = s.shoot_date ? esc(s.shoot_date) : String(i + 1).padStart(2, '0');
   const meta = [s.subtitle, s.location].filter(Boolean).map(esc).join(' · ');
+  const title = String(s.title || '').trim();
+  // 后台的「简介」经常和标题填成同一句话，重复一遍只会让卡片显得没内容
+  const lede = s.description && String(s.description).trim() !== title
+    ? `<p class="lede">${esc(s.description)}</p>` : '';
   const media = s.cover
-    ? `<div class="story-feature-media"><img src="${esc(s.cover)}" alt="${esc(s.title)}" loading="lazy"></div>` : '';
-  return `<article class="story-feature">
+    ? `<div class="story-card-media"><img src="${esc(s.cover)}" alt="${esc(s.title)}" loading="lazy"></div>` : '';
+  return `<article class="story-card">
     ${media}
-    <div class="story-feature-text">
+    <div class="story-card-body">
       <span class="issue" lang="en">${issue}</span>
       <h3 lang="zh-CN">${esc(s.title)}</h3>
       ${meta ? `<p class="meta">${meta}</p>` : ''}
-      ${s.description ? `<p class="lede">${esc(s.description)}</p>` : ''}
+      ${lede}
       <a class="view-story" href="${PAGE[s.category] || 'index.html'}"><span lang="en">View Story</span> →</a>
     </div>
   </article>`;
@@ -109,5 +113,5 @@ export async function initHomeCMS() {
   }
 
   const stories = Array.isArray(data && data.stories) ? data.stories : [];
-  if (storiesBox && stories.length) storiesBox.innerHTML = stories.map(feature).join('');
+  if (storiesBox && stories.length) storiesBox.innerHTML = stories.map(storyCard).join('');
 }
