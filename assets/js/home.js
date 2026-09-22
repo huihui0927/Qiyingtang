@@ -72,13 +72,22 @@ addEventListener('resize', () => {
 });
 
 // —— 客片故事：三列卡片 ——
+// 后台的「简介」经常空着、或者跟标题填成同一句话；缺这一行的卡会比旁边矮一截，
+// 三张卡的底线就错开了。所以退而取正文的第一句（正文最长到两句），保证每张都有简介。
+function pickLede(s) {
+  const title = String(s.title || '').trim();
+  const desc = String(s.description || '').trim();
+  if (desc && desc !== title) return desc;
+  const body = String(s.content || '').trim();
+  if (!body) return '';
+  const first = body.split('\n')[0].split(/(?<=[。！？])/).slice(0, 2).join('').trim();
+  return first.length > 48 ? first.slice(0, 48) + '…' : first;
+}
+
 function storyCard(s, i) {
   const issue = s.shoot_date ? esc(s.shoot_date) : String(i + 1).padStart(2, '0');
   const meta = [s.subtitle, s.location].filter(Boolean).map(esc).join(' · ');
-  const title = String(s.title || '').trim();
-  // 后台的「简介」经常和标题填成同一句话，重复一遍只会让卡片显得没内容
-  const lede = s.description && String(s.description).trim() !== title
-    ? `<p class="lede">${esc(s.description)}</p>` : '';
+  const lede = pickLede(s);
   const media = s.cover
     ? `<div class="story-card-media"><img src="${esc(s.cover)}" alt="${esc(s.title)}" loading="lazy"></div>` : '';
   return `<article class="story-card">
@@ -87,7 +96,7 @@ function storyCard(s, i) {
       <span class="issue" lang="en">${issue}</span>
       <h3 lang="zh-CN">${esc(s.title)}</h3>
       ${meta ? `<p class="meta">${meta}</p>` : ''}
-      ${lede}
+      ${lede ? `<p class="lede">${esc(lede)}</p>` : ''}
       <a class="view-story" href="${PAGE[s.category] || 'index.html'}"><span lang="en">View Story</span> →</a>
     </div>
   </article>`;

@@ -311,7 +311,12 @@
   transition: transform .7s ease;
 }
 .story-card:hover .story-card-media img { transform: scale(1.04); }
-.story-card-body { padding-top: var(--space-3); }
+/* 简介行有/无、标题折行都会撑高文字块；用 flex 把链接钉到卡底，三张的底线才不会被后台数据拉歪 */
+.story-card-body {
+  padding-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+}
 .story-card .issue {
   font-family: var(--font-en);
   font-size: clamp(1.75rem, 2.6vw, 2.4rem);
@@ -338,7 +343,7 @@
   color: var(--ink-mute);
   margin-bottom: var(--space-2);
 }
-/* 后台简介长短不一，统一锁两行，三张卡的「View Story」才在同一水平线上 */
+/* 后台简介长短不一，统一锁两行 */
 .story-card .lede {
   font-family: var(--font-kai);
   font-size: var(--fs-sm);
@@ -358,6 +363,8 @@
   font-size: var(--fs-xs);
   border-bottom: 1px solid var(--ink);
   padding-bottom: 3px;
+  margin-top: auto;
+  align-self: flex-start; /* 否则 flex 项会拉满整行，下划线变成通栏 */
 }
 .story-card:hover .view-story { border-color: var(--seal); }
 /* 整卡都是点击热区：伪元素铺满 .story-card（最近的定位祖先），链接仍只占一个键盘焦点 */

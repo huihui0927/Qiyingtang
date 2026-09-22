@@ -140,6 +140,26 @@ describe('客片故事卡', () => {
     expect(card.querySelector('h3').textContent).toBe('张先生 × 李小姐');
   });
 
+  it('简介空着或撞标题时退到正文第一句，三张卡不会缺一行', async () => {
+    const { initHomeCMS } = await import('../assets/js/home.js');
+    apiResponse({ photos: [], stories: [
+      cmsStory(1, { title: '张先生 × 李小姐', description: '张先生 × 李小姐', content: '一场满载鲜花的开篇。\n红瓣落下的瞬间。\n第三段。' }),
+      cmsStory(2, { description: '', content: '两行正文。\n第二行。' }),
+    ] });
+    await initHomeCMS();
+    const ledes = [...document.querySelectorAll('#client-stories .lede')].map(p => p.textContent);
+    expect(ledes).toEqual(['一场满载鲜花的开篇。', '两行正文。']);
+  });
+
+  it('正文过长时截到 48 字加省略号，不会把一张卡撑高一屏', async () => {
+    const { initHomeCMS } = await import('../assets/js/home.js');
+    apiResponse({ photos: [], stories: [cmsStory(1, { description: '', content: '影'.repeat(80) })] });
+    await initHomeCMS();
+    const lede = document.querySelector('#client-stories .lede').textContent;
+    expect(lede.length).toBe(49);
+    expect(lede.endsWith('…')).toBe(true);
+  });
+
   it('接口挂了保留 index.html 里写死的 3 张静态卡', async () => {
     const { initHomeCMS } = await import('../assets/js/home.js');
     globalThis.fetch = vi.fn().mockRejectedValue(new Error('offline'));
