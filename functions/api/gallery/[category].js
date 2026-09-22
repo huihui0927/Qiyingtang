@@ -1,13 +1,16 @@
 import { json, error, CATEGORIES, publicUrl, readNum } from '../../_lib.js';
 
-// GET /api/gallery/{category}?limit=60&offset=0 —— 前台作品流（已发布）
+const MAX_ITEMS = 500;
+
+// GET /api/gallery/{category}?limit=500&offset=0 —— 前台作品流（已发布）
+// 默认值必须等于上限：三张画廊页都不带 limit，默认小了会静默少图。
 export async function onRequestGet(context) {
   const { env, params, request } = context;
   const category = params.category;
   if (!CATEGORIES.includes(category)) return error('未知分类', 404);
 
   const url = new URL(request.url);
-  const limit = Math.min(Math.max(readNum(url.searchParams.get('limit'), 60), 1), 200);
+  const limit = Math.min(Math.max(readNum(url.searchParams.get('limit'), MAX_ITEMS), 1), MAX_ITEMS);
   const offset = Math.max(readNum(url.searchParams.get('offset'), 0), 0);
 
   const { results } = await env.DB
