@@ -95,7 +95,7 @@ async function renderDashboard() {
     <div class="stats">
       ${statCard('作品总数', s.photos, cls, pct, s.max_photos)}
       ${statCard('已发布', s.published)}${statCard('草稿', s.drafts)}
-      ${statCard('客片故事', s.stories)}${statCard('首页精选', s.homepage)}
+      ${statCard('客片故事', s.stories)}${statCard('首页故事', s.homepage)}${statCard('首页作品', s.homepage_photos)}
     </div>
     <p class="empty" style="text-align:left;padding:.5rem 0">${cls ? '⚠ ' : ''}${esc(note)}</p>`;
 }
@@ -152,6 +152,20 @@ function openCropper(file, mode, onDone) {
 
 // —— 作品管理 ——
 let PHOTOS = [];
+const MAX_HOME_PHOTOS = 14;
+
+// 首页精选以 PHOTOS 缓存为准（列表 limit=500 > 作品上限，一次拉全）。
+function homeIds() {
+  return PHOTOS.filter(p => p.homepage_order != null)
+    .sort((a, b) => a.homepage_order - b.homepage_order).map(p => p.id);
+}
+function isOnHome(id) { return homeIds().includes(id); }
+async function setHomePhotos(ids) {
+  if (ids.length > MAX_HOME_PHOTOS) throw new Error(`首页最多 ${MAX_HOME_PHOTOS} 张，先移出一张再添加`);
+  await api.put('/api/home', { photo_ids: ids });
+  toast(ids.length ? `首页精选已更新（${ids.length} 张）` : '已从首页移出');
+}
+
 async function renderPhotos() {
   const { items } = await api.get('/api/photos?limit=500');
   PHOTOS = items;
@@ -167,7 +181,15 @@ async function renderPhotos() {
     const btn = e.target.closest('[data-act]'); if (!btn) return;
     const id = e.target.closest('.card').dataset.id;
     const p = PHOTOS.find(x => x.id === id);
-    if (btn.dataset.act === 'toggle') { try { await api.put('/api/photos/' + id, { is_published: !p.is_published }); toast('已更新'); renderPhotos(); } catch (err) { toast(err.message, true); } }
+    if (btn.dataset.act === 'toggle') {
+      try {
+        await api.put('/api/photos/' + id, { is_published: !p.is_published });
+        // 草稿不会出现在前台首页，隐藏时顺手把它从精选里摘掉，免得留下「勾了却不显示」的怪状态
+        if (p.is_published && isOnHome(id)) await setHomePhotos(homeIds().filter(x => x !== id));
+        toast('已更新'); renderPhotos();
+      } catch (err) { toast(err.message, true); }
+    }
+    else if (btn.dataset.act === 'home') { try { await setHomePhotos(isOnHome(id) ? homeIds().filter(x => x !== id) : [...homeIds(), id]); renderPhotos(); } catch (err) { toast(err.message, true); } }
     else if (btn.dataset.act === 'edit') openPhotoEdit(p);
     else if (btn.dataset.act === 'del') { if (confirm(p.source === 'site' ? '删除该历史作品？仅移除记录，静态图片文件保留在站点。' : '删除该作品？图片会从 R2 一并移除。')) { try { await api.del('/api/photos/' + id); toast('已删除'); renderPhotos(); } catch (err) { toast(err.message, true); } } }
   });
@@ -175,11 +197,17 @@ async function renderPhotos() {
 function photoCard(p) {
   const sub = p.subcategory ? ` · ${esc(p.subcategory)}` : '';
   const legacy = p.source === 'site' ? '<span class="badge draft" title="历史静态图，仅可改元数据/隐藏/删除，不能重新裁剪">旧图</span>' : '';
+  const onHome = isOnHome(p.id);
+  const homeBtn = p.is_published
+    ? `<button class="btn btn-sm${onHome ? ' btn-home' : ''}" data-act="home">${onHome ? '★ 移出首页' : '☆ 设为首页'}</button>`
+    : '<button class="btn btn-sm" disabled title="先发布这张作品，才能设为首页精选">☆ 设为首页</button>';
+  const homeBadge = onHome ? '<span class="badge home">首页</span>' : '';
   return `<div class="card" data-id="${p.id}" data-cat="${p.category}">
-    <span class="badge ${p.is_published ? 'pub' : 'draft'}">${p.is_published ? '已发布' : '草稿'}</span>${legacy}
+    <div class="badges"><span class="badge ${p.is_published ? 'pub' : 'draft'}">${p.is_published ? '已发布' : '草稿'}</span>${legacy}${homeBadge}</div>
     <img src="${esc(p.thumbnail)}" alt="${esc(p.alt_text || p.title)}" loading="lazy">
     <div class="meta"><div class="t">${esc(p.title)}</div><div class="c">${esc(CATS[p.category] || p.category)}${sub}</div></div>
     <div class="actions">
+      ${homeBtn}
       <button class="btn btn-sm" data-act="toggle">${p.is_published ? '隐藏' : '发布'}</button>
       <button class="btn btn-sm" data-act="edit">编辑</button>
       <button class="btn btn-sm" data-act="del">删除</button>
@@ -372,40 +400,96 @@ function openStoryEditor(s) {
 
 // —— 首页精选 ——
 let HOME = [];
+let HOME_PHOTOS = [];
+let HOME_STORY_POOL = [];
 async function renderHomepage() {
-  const [{ stories: cur }, { items: all }] = await Promise.all([api.get('/api/home'), api.get('/api/stories?limit=200')]);
+  const [{ stories: cur, photos: curPhotos }, { items: allStories }, { items: allPhotos }] = await Promise.all([
+    api.get('/api/home'), api.get('/api/stories?limit=200'), api.get('/api/photos?limit=500'),
+  ]);
   HOME = cur.slice();
-  const pubAll = all.filter(s => s.is_published);
-  const pool = pubAll.filter(s => !HOME.some(h => h.id === s.id));
+  HOME_PHOTOS = curPhotos.slice();
+  PHOTOS = allPhotos;
+  const pubStories = allStories.filter(s => s.is_published);
+  HOME_STORY_POOL = pubStories;
   $('#view').innerHTML = `<div class="page-head"><h2>首页精选</h2><button class="btn btn-primary" id="home-save">保存顺序</button></div>
+
+    <h3 class="panel-title">精选作品（图片）</h3>
+    <p class="empty" style="text-align:left;padding:0 0 1rem">首页「精选作品」一栏按下面的顺序显示，最多 ${MAX_HOME_PHOTOS} 张。也可以直接去「作品管理」点某张图的「设为首页」。</p>
+    <div class="home-slots" id="photo-slots"></div>
+    <div class="row" style="margin:.75rem 0 2rem;align-items:flex-end">
+      <div class="field" style="flex:1"><label>添加已发布作品</label><select class="select" id="photo-add"></select></div>
+      <button class="btn" id="photo-add-btn">＋ 加入</button>
+    </div>
+
+    <h3 class="panel-title">客片故事</h3>
     <p class="empty" style="text-align:left;padding:0 0 1rem">拖拽调整顺序，首页「客片故事」区块将按此顺序显示。</p>
     <div class="home-slots" id="slots"></div>
-    <div class="row" style="margin-top:1.5rem;align-items:flex-end">
-      <div class="field" style="flex:1"><label>添加已发布故事</label><select class="select" id="home-add"><option value="">选择要加入首页的故事…</option>${pool.map(s => `<option value="${s.id}">${esc(s.title)}</option>`).join('')}</select></div>
+    <div class="row" style="margin-top:.75rem;align-items:flex-end">
+      <div class="field" style="flex:1"><label>添加已发布故事</label><select class="select" id="home-add"><option value="">选择要加入首页的故事…</option>${pubStories.filter(s => !HOME.some(h => h.id === s.id)).map(s => `<option value="${s.id}">${esc(s.title)}</option>`).join('')}</select></div>
       <button class="btn" id="home-add-btn">＋ 加入</button>
     </div>`;
   drawSlots();
+  drawPhotoSlots();
+
+  $('#photo-add-btn').onclick = () => {
+    const sel = $('#photo-add');
+    if (!sel.value) return;
+    if (HOME_PHOTOS.length >= MAX_HOME_PHOTOS) { toast(`首页最多 ${MAX_HOME_PHOTOS} 张`, true); return; }
+    const p = allPhotos.find(x => x.id === sel.value);
+    if (p && !HOME_PHOTOS.some(h => h.id === p.id)) { HOME_PHOTOS.push(p); drawPhotoSlots(); }
+  };
   $('#home-add-btn').onclick = () => {
     const sel = $('#home-add'); const sid = sel.value; if (!sid) return;
-    const story = pubAll.find(s => s.id === sid);
-    if (story && !HOME.some(h => h.id === sid)) { HOME.push(story); drawSlots(); sel.innerHTML = `<option value="">选择要加入首页的故事…</option>` + (pubAll.filter(s => !HOME.some(h => h.id === s.id)).map(s => `<option value="${s.id}">${esc(s.title)}</option>`).join('')); }
+    const story = pubStories.find(s => s.id === sid);
+    if (story && !HOME.some(h => h.id === sid)) { HOME.push(story); drawSlots(); }
   };
   $('#home-save').onclick = async () => {
-    try { await api.put('/api/home', { story_ids: HOME.map(s => s.id) }); toast('首页精选已更新'); } catch (e) { toast(e.message, true); }
+    const btn = $('#home-save'); btn.disabled = true;
+    try { await api.put('/api/home', { story_ids: HOME.map(s => s.id), photo_ids: HOME_PHOTOS.map(p => p.id) }); toast('首页精选已更新'); }
+    catch (e) { toast(e.message, true); }
+    finally { btn.disabled = false; }
   };
+}
+function photoPoolOptions() {
+  const pool = PHOTOS.filter(p => p.is_published && !HOME_PHOTOS.some(h => h.id === p.id));
+  const groups = Object.entries(CATS).map(([cat, label]) => {
+    const rows = pool.filter(p => p.category === cat);
+    return rows.length ? `<optgroup label="${esc(label)}（${rows.length}）">${rows.map(p => `<option value="${p.id}">${esc(p.title)}</option>`).join('')}</optgroup>` : '';
+  }).join('');
+  return `<option value="">选择要加入首页的作品…</option>${groups}`;
+}
+function drawPhotoSlots() {
+  const box = $('#photo-slots');
+  const sel = $('#photo-add');
+  if (sel) sel.innerHTML = photoPoolOptions();
+  if (!box) return;
+  if (!HOME_PHOTOS.length) { box.innerHTML = '<p class="empty">尚未选择首页作品，首页会显示内置的 3 张代表作。</p>'; return; }
+  box.innerHTML = HOME_PHOTOS.map((p, i) => `<div class="slot" draggable="true" data-id="${p.id}">
+    <span class="drag-handle" title="拖拽排序">⠿</span>
+    <span class="slot-no">${i + 1}</span>
+    <img src="${esc(p.thumbnail)}" alt="">
+    <div style="flex:1"><div>${esc(p.title)}</div><div style="font-size:.78rem;color:var(--admin-mute)">${esc(CATS[p.category] || p.category)}${p.subcategory ? ' · ' + esc(p.subcategory) : ''}</div></div>
+    <button class="btn btn-sm" data-rm="${p.id}">移除</button></div>`).join('');
+  $$('#photo-slots [data-rm]', box).forEach(b => b.onclick = () => { HOME_PHOTOS = HOME_PHOTOS.filter(p => p.id !== b.dataset.rm); drawPhotoSlots(); });
+  wireDrag(box, order => { HOME_PHOTOS = order.map(id => HOME_PHOTOS.find(p => p.id === id)).filter(Boolean); });
 }
 function drawSlots() {
   const box = $('#slots');
+  const sel = $('#home-add');
+  if (sel) sel.innerHTML = `<option value="">选择要加入首页的故事…</option>` +
+    HOME_STORY_POOL.filter(s => !HOME.some(h => h.id === s.id)).map(s => `<option value="${s.id}">${esc(s.title)}</option>`).join('');
+  if (!box) return;
   if (!HOME.length) { box.innerHTML = '<p class="empty">尚未选择首页故事。</p>'; return; }
   box.innerHTML = HOME.map((s, i) => `<div class="slot" draggable="true" data-id="${s.id}">
     <span class="drag-handle" title="拖拽排序">⠿</span>
+    <span class="slot-no">${i + 1}</span>
     ${s.cover ? `<img src="${esc(s.cover)}" alt="">` : '<div class="thumb"></div>'}
     <div style="flex:1"><div>${esc(s.title)}</div><div style="font-size:.78rem;color:var(--admin-mute)">${esc(CATS[s.category] || s.category)}</div></div>
     <button class="btn btn-sm" data-rm="${s.id}">移除</button></div>`).join('');
   $$('#slots [data-rm]', box).forEach(b => b.onclick = () => { HOME = HOME.filter(s => s.id !== b.dataset.rm); drawSlots(); });
-  wireDrag(box);
+  wireDrag(box, order => { HOME = order.map(id => HOME.find(s => s.id === id)).filter(Boolean); });
 }
-function wireDrag(box) {
+function wireDrag(box, commit) {
   let dragEl = null;
   const after = y => {
     let best = null, bestOff = -Infinity;
@@ -419,7 +503,7 @@ function wireDrag(box) {
   };
   $$('.slot', box).forEach(item => {
     item.addEventListener('dragstart', () => { dragEl = item; item.style.opacity = '.5'; });
-    item.addEventListener('dragend', () => { item.style.opacity = ''; dragEl = null; commitOrder(); });
+    item.addEventListener('dragend', () => { item.style.opacity = ''; dragEl = null; commit($$('.slot', box).map(n => n.dataset.id)); });
   });
   box.addEventListener('dragover', e => {
     if (!dragEl) return;
@@ -427,10 +511,6 @@ function wireDrag(box) {
     const a = after(e.clientY);
     if (a == null) box.appendChild(dragEl); else box.insertBefore(dragEl, a);
   });
-  function commitOrder() {
-    const order = $$('.slot', box).map(n => n.dataset.id);
-    HOME = order.map(id => HOME.find(s => s.id === id)).filter(Boolean);
-  }
 }
 
 // —— 启动 ——

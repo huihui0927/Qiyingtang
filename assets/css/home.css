@@ -136,6 +136,21 @@
 @media (min-width: 900px) {
   .bento { grid-auto-rows: 13.5rem; }
 }
+/* JS 接管后改走等高行：每行几张、末行怎么拉匀由 home.js 算，这里只管行高。
+   上面的 grid 规则留给禁用 JS 的访客（index.html 里写死的那 3 格）。 */
+.bento--rows { display: flex; flex-direction: column; gap: var(--space-3); }
+.bento-row { display: flex; gap: var(--space-3); height: 14rem; }
+.bento--rows .bento-cell { flex: 1 1 0; min-width: 0; }
+.bento--rows .bento-lead { flex-grow: 2; }
+@media (max-width: 639px) {
+  .bento-row { height: 9rem; }
+}
+@media (min-width: 640px) and (max-width: 899px) {
+  .bento-row { height: 11rem; }
+}
+@media (min-width: 1440px) {
+  .bento-row { height: 16rem; }
+}
 .bento-cell img {
   width: 100%; height: 100%;
   object-fit: cover;

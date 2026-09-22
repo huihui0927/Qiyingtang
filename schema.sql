@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS photos (
   alt_text       TEXT,
   sort_order     INTEGER NOT NULL DEFAULT 0,
   is_published   INTEGER NOT NULL DEFAULT 0,
+  homepage_order INTEGER,                             -- NULL = 不上首页；非 NULL = 首页「精选作品」，值即展示顺序
   created_at     TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at     TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -28,6 +29,7 @@ CREATE TABLE IF NOT EXISTS photos (
 -- 覆盖前台按「已发布 + 分类 + 顺序」与后台按故事取图的查询，避免全表扫描。
 CREATE INDEX IF NOT EXISTS idx_photos_pub   ON photos(is_published, category, sort_order);
 CREATE INDEX IF NOT EXISTS idx_photos_story ON photos(story_id, sort_order);
+CREATE INDEX IF NOT EXISTS idx_photos_home  ON photos(homepage_order);
 
 -- stories：主题/故事（4 大目标第 3 项）。content 存极简 Markdown 原文，前端渲染。
 CREATE TABLE IF NOT EXISTS stories (

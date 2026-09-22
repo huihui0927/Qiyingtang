@@ -38,17 +38,18 @@
 
   <section class="container works" id="works" data-reveal>
     <div class="section-title"><h2>精选作品</h2><span class="en" lang="en">Selected Works</span></div>
+    <!-- 无 JS / 后台不可用时的兜底。home.js 会读这几格（src=缩略图，data-full=大图）重排成图片墙。 -->
     <div class="bento" id="bento">
-      <button class="bento-cell bento-lg" type="button" data-index="0" aria-label="查看作品：婚礼全天纪实">
-        <img src="assets/images/wedding/1040g00830qg6n847nu5g5nhqauo080nosh232p8.webp" alt="婚礼全天纪实" width="1920" height="1280" loading="lazy">
+      <button class="bento-cell bento-lg" type="button" aria-label="查看作品：婚礼全天纪实">
+        <img src="assets/images/wedding/1040g00830qg6n847nu5g5nhqauo080nosh232p8-thumb.webp" data-full="assets/images/wedding/1040g00830qg6n847nu5g5nhqauo080nosh232p8.webp" alt="婚礼全天纪实" width="1920" height="1280" loading="lazy">
         <span class="bento-cap"><span class="cap-year" lang="en">2026</span> 婚礼全天纪实 · 从晨纱到晚宴</span>
       </button>
-      <button class="bento-cell bento-sm" type="button" data-index="1" aria-label="查看作品：人像写真">
-        <img src="assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo.webp" alt="人像写真 · 情绪与光影" width="1280" height="1920" loading="lazy">
+      <button class="bento-cell bento-sm" type="button" aria-label="查看作品：人像写真">
+        <img src="assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo-thumb.webp" data-full="assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo.webp" alt="人像写真 · 情绪与光影" width="1280" height="1920" loading="lazy">
         <span class="bento-cap"><span class="cap-year" lang="en">Portrait</span> 人像写真 · 情绪与光影</span>
       </button>
-      <button class="bento-cell bento-sm" type="button" data-index="2" aria-label="查看作品：品牌活动纪实">
-        <img src="assets/images/event/CLL_2044-opq3059444369.webp" alt="品牌活动纪实" width="2000" height="1334" loading="lazy">
+      <button class="bento-cell bento-sm" type="button" aria-label="查看作品：品牌活动纪实">
+        <img src="assets/images/event/CLL_2044-opq3059444369-thumb.webp" data-full="assets/images/event/CLL_2044-opq3059444369.webp" alt="品牌活动纪实" width="2000" height="1334" loading="lazy">
         <span class="bento-cap"><span class="cap-year" lang="en">Event</span> 品牌活动 · 现场纪实</span>
       </button>
     </div>
@@ -137,40 +138,15 @@
 </main>
 
 <link rel="stylesheet" href="assets/css/components.css?v=2">
-<link rel="stylesheet" href="assets/css/home.css?v=2">
+<link rel="stylesheet" href="assets/css/home.css?v=3">
 <script type="module">
   import { initReveal } from './assets/js/reveal.js?v=2';
-  import { openLightbox } from './assets/js/lightbox.js?v=2';
   import { initCarousel } from './assets/js/carousel.js?v=2';
-  import { initHomeCMS } from './assets/js/home.js?v=1';
+  import { initHomeCMS } from './assets/js/home.js?v=2';
   initReveal();
   initCarousel(document.querySelector('[data-carousel]'), document.querySelector('[data-carousel-dots]'), { interval: 2000 });
+  // 精选作品的取数、排版与点击放大都在 home.js 里（含后台数据 + 静态兜底两条路）
   initHomeCMS();
-
-  const bentoItems = [
-    {
-      src: 'assets/images/wedding/1040g00830qg6n847nu5g5nhqauo080nosh232p8.webp',
-      fallback: 'assets/images/wedding/1040g00830qg6n847nu5g5nhqauo080nosh232p8.jpg',
-      thumb: 'assets/images/wedding/1040g00830qg6n847nu5g5nhqauo080nosh232p8-thumb.webp',
-      alt: '婚礼全天纪实', width: 1920, height: 1280,
-    },
-    {
-      src: 'assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo.webp',
-      fallback: 'assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo.jpg',
-      thumb: 'assets/images/portrait/1040g00830r2kji3hhe005nhqauo080noqu9v1lo-thumb.webp',
-      alt: '人像写真 · 情绪与光影', width: 1280, height: 1920,
-    },
-    {
-      src: 'assets/images/event/CLL_2044-opq3059444369.webp',
-      fallback: 'assets/images/event/CLL_2044-opq3059444369.jpg',
-      thumb: 'assets/images/event/CLL_2044-opq3059444369-thumb.webp',
-      alt: '品牌活动 · 现场纪实', width: 2000, height: 1334,
-    },
-  ];
-  const cells = [...document.querySelectorAll('.bento-cell')];
-  cells.forEach(btn => {
-    btn.addEventListener('click', () => openLightbox(bentoItems, Number(btn.dataset.index), btn));
-  });
 </script>
 
 <!-- @include partials/footer.html -->

@@ -10,6 +10,8 @@
     "dev": "node scripts/build.mjs && wrangler pages dev dist",
     "db:migrate:local": "wrangler d1 execute qiyingtang --local --file=./schema.sql",
     "db:migrate:remote": "wrangler d1 execute qiyingtang --remote --file=./schema.sql",
+    "db:add-homepage-order:local": "wrangler d1 execute qiyingtang --local --file=./migrations/2026-09-21-homepage-order.sql",
+    "db:add-homepage-order:remote": "wrangler d1 execute qiyingtang --remote --file=./migrations/2026-09-21-homepage-order.sql",
     "db:legacy": "node scripts/migrate-legacy.mjs",
     "db:legacy:local": "node scripts/migrate-legacy.mjs && wrangler d1 execute qiyingtang --local --file=./legacy.sql",
     "db:legacy:remote": "node scripts/migrate-legacy.mjs && wrangler d1 execute qiyingtang --remote --file=./legacy.sql",

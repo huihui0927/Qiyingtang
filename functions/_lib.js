@@ -139,6 +139,7 @@ export function rowToPhoto(env, r) {
     alt_text: r.alt_text,
     sort_order: r.sort_order,
     is_published: !!r.is_published,
+    homepage_order: r.homepage_order ?? null,
     created_at: r.created_at,
     updated_at: r.updated_at,
   };

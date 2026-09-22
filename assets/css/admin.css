@@ -91,6 +91,7 @@ img { display: block; max-width: 100%; }
 .btn-primary:hover { filter: brightness(1.08); }
 .btn-ghost { background: none; }
 .btn-sm { padding: .35rem .6rem; font-size: .82rem; }
+.btn-home { background: var(--admin-gold); border-color: var(--admin-gold); color: #14120F; }
 .btn[disabled] { opacity: .5; cursor: not-allowed; }
 
 .chip {
@@ -123,6 +124,10 @@ img { display: block; max-width: 100%; }
 .badge { position: absolute; top: .5rem; left: .5rem; font-size: .7rem; padding: .15rem .45rem; border-radius: 4px; background: rgba(0,0,0,.55); }
 .badge.pub { background: var(--admin-ok); }
 .badge.draft { background: var(--admin-accent); }
+.badge.home { background: var(--admin-gold); color: #14120F; }
+/* 一张卡可能同时挂「已发布 / 旧图 / 首页」三个角标，横排而不是叠在同一个坐标上 */
+.badges { position: absolute; top: .5rem; left: .5rem; display: flex; gap: .3rem; z-index: 1; }
+.badges .badge { position: static; }
 
 /* —— 故事列表 —— */
 .list { display: grid; gap: .6rem; }
@@ -137,10 +142,12 @@ img { display: block; max-width: 100%; }
 .drag-handle { cursor: grab; color: var(--admin-mute); font-size: 1.1rem; user-select: none; }
 
 /* —— 首页精选 —— */
+.panel-title { font-family: var(--font-kai, serif); font-weight: 500; font-size: 1.1rem; margin: 0 0 .5rem; color: var(--admin-gold); }
 .home-slots { display: grid; gap: .6rem; max-width: 640px; }
 .slot { display: flex; align-items: center; gap: .8rem; background: var(--admin-panel); border: 1px solid var(--admin-line); border-radius: 10px; padding: .5rem .8rem; }
 .slot img { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; }
 .slot.over { outline: 2px dashed var(--admin-gold); }
+.slot-no { width: 1.6em; text-align: right; color: var(--admin-mute); font-size: .82rem; font-variant-numeric: tabular-nums; }
 
 /* —— Modal —— */
 .modal-back { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: grid; place-items: center; padding: 1.5rem; z-index: 50; }
