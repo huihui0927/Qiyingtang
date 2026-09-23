@@ -120,6 +120,15 @@ export function publicUrl(env, key, source = 'r2') {
   return `/api/media/${key}`;
 }
 
+// R2 里的图片是按 key 覆盖写的，而响应头写死 immutable 一年 —— 同一个 URL 永远拿不到新文件。
+// 所以「换图」必须变成「换 URL」：把所在行的 updated_at 当版本号挂上去，后台重传才会真的反映到前台。
+export function mediaUrl(env, key, stamp, source = 'r2') {
+  const url = publicUrl(env, key, source);
+  if (!url || source === 'site') return url;
+  const v = String(stamp || '').replace(/\D/g, '').slice(0, 14);
+  return v ? `${url}${url.includes('?') ? '&' : '?'}v=${v}` : url;
+}
+
 // DB 行 → 对外 photo 对象（URL 由 key 派生）
 export function rowToPhoto(env, r) {
   if (!r) return null;
@@ -132,8 +141,8 @@ export function rowToPhoto(env, r) {
     subcategory: r.subcategory ?? null,
     source,
     story_id: r.story_id,
-    image: publicUrl(env, r.image_key, source),
-    thumbnail: publicUrl(env, r.thumbnail_key, source),
+    image: mediaUrl(env, r.image_key, r.updated_at, source),
+    thumbnail: mediaUrl(env, r.thumbnail_key, r.updated_at, source),
     width: r.width,
     height: r.height,
     alt_text: r.alt_text,
@@ -153,7 +162,7 @@ export function rowToStory(env, r) {
     slug: r.slug,
     title: r.title,
     subtitle: r.subtitle,
-    cover: r.cover_key ? publicUrl(env, r.cover_key) : null,
+    cover: mediaUrl(env, r.cover_key, r.updated_at),
     category: r.category,
     description: r.description,
     content: r.content,

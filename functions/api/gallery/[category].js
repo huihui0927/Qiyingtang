@@ -1,4 +1,4 @@
-import { json, error, CATEGORIES, publicUrl, readNum } from '../../_lib.js';
+import { json, error, CATEGORIES, mediaUrl, readNum } from '../../_lib.js';
 
 const MAX_ITEMS = 500;
 
@@ -15,7 +15,7 @@ export async function onRequestGet(context) {
 
   const { results } = await env.DB
     .prepare(
-      `SELECT id, image_key, thumbnail_key, width, height, alt_text, title, category, subcategory, source, sort_order
+      `SELECT id, image_key, thumbnail_key, updated_at, width, height, alt_text, title, category, subcategory, source, sort_order
        FROM photos
        WHERE is_published = 1 AND category = ?
        ORDER BY sort_order ASC, id ASC
@@ -26,8 +26,8 @@ export async function onRequestGet(context) {
 
   const items = results.map(r => {
     const source = r.source || 'r2';
-    const src = publicUrl(env, r.image_key, source);
-    const thumb = publicUrl(env, r.thumbnail_key, source);
+    const src = mediaUrl(env, r.image_key, r.updated_at, source);
+    const thumb = mediaUrl(env, r.thumbnail_key, r.updated_at, source);
     const sub = r.subcategory || '';
     return {
       id: r.id,
