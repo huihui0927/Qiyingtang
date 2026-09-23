@@ -1,0 +1,74 @@
+import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { COVER, centerRect, coverOutput } from '../assets/js/crop.js';
+
+// 前端卡片框和后台出片必须同比例：这一条守住「改了一个忘了另一个」的漂移。
+const homeCss = readFileSync(new URL('../assets/css/home.css', import.meta.url), 'utf8');
+
+describe('封面几何与首页卡片框一致', () => {
+  it('home.css 里 .story-card-media img 是 4:5', () => {
+    const block = homeCss.slice(homeCss.indexOf('.story-card-media img'), homeCss.indexOf('.story-card:hover'));
+    expect(block).toMatch(/aspect-ratio:\s*4\s*\/\s*5/);
+  });
+  it('COVER 常量与之一致', () => {
+    expect(COVER.ratio).toBeCloseTo(4 / 5, 10);
+    expect(COVER.width / COVER.height).toBeCloseTo(COVER.ratio, 10);
+  });
+});
+
+describe('centerRect', () => {
+  it('竖图只裁掉顶部一条，宽度用满', () => {
+    const r = centerRect(972, 1296, COVER.ratio);
+    expect(r.w).toBeCloseTo(972, 6);
+    expect(r.h).toBeCloseTo(1215, 6);
+    expect(r.x).toBeCloseTo(0, 6);
+    expect(r.y).toBeCloseTo(40.5, 6);
+  });
+  it('横图高度用满、左右居中裁切', () => {
+    const r = centerRect(1400, 933, COVER.ratio);
+    expect(r.h).toBeCloseTo(933, 6);
+    expect(r.w).toBeCloseTo(746.4, 4);
+    expect(r.x).toBeCloseTo(326.8, 4);
+    expect(r.y).toBeCloseTo(0, 6);
+  });
+  it('方图裁成 4:5', () => {
+    const r = centerRect(1000, 1000, COVER.ratio);
+    expect([Math.round(r.w), Math.round(r.h), r.x, r.y]).toEqual([800, 1000, 100, 0]);
+  });
+  it('裁切块永不出界且严格等于目标比例', () => {
+    for (const [w, h] of [[3000, 200], [200, 3000], [1600, 1200], [1120, 1400]]) {
+      const r = centerRect(w, h, COVER.ratio);
+      expect(r.x).toBeGreaterThanOrEqual(0);
+      expect(r.y).toBeGreaterThanOrEqual(0);
+      expect(r.x + r.w).toBeLessThanOrEqual(w + 1e-6);
+      expect(r.y + r.h).toBeLessThanOrEqual(h + 1e-6);
+      expect(r.w / r.h).toBeCloseTo(COVER.ratio, 6);
+      expect(Math.max(r.w, r.h)).toBeGreaterThan(0);
+    }
+  });
+  it('非法尺寸返回空矩形而不是 NaN', () => {
+    expect(centerRect(0, 100, COVER.ratio)).toEqual({ x: 0, y: 0, w: 0, h: 0 });
+    expect(centerRect(100, 100, 0)).toEqual({ x: 0, y: 0, w: 0, h: 0 });
+  });
+});
+
+describe('coverOutput', () => {
+  it('够大的裁切块出满 1120×1400', () => {
+    expect(coverOutput(1400, 1750)).toEqual({ width: 1120, height: 1400, tooSmall: false });
+    expect(coverOutput(1120, 1400)).toEqual({ width: 1120, height: 1400, tooSmall: false });
+    expect(coverOutput(2000, 2500)).toEqual({ width: 1120, height: 1400, tooSmall: false });
+  });
+  it('原图不够大时按比例缩着出，绝不放大', () => {
+    const r = coverOutput(746, 933);
+    expect(r).toEqual({ width: 746, height: 933, tooSmall: true });
+    expect(r.width / r.height).toBeCloseTo(COVER.ratio, 3);
+  });
+  it('出片尺寸恒为 4:5 且不超过上限', () => {
+    for (const [w, h] of [[3000, 3750], [1120, 1400], [746, 933], [400, 500], [0, 0]]) {
+      const r = coverOutput(w, h);
+      expect(r.width).toBeLessThanOrEqual(COVER.width);
+      expect(r.height).toBeLessThanOrEqual(COVER.height);
+      expect(r.width / r.height).toBeCloseTo(COVER.ratio, 2);
+    }
+  });
+});

@@ -1,5 +1,8 @@
 // 栖影堂 CMS 后台 SPA（Vanilla，无框架）。对接 Phase 2 的 /api/*。
 // 图片：浏览器端 Cropper.js 裁剪 → Canvas 导出 WebP（主图≤2000 q0.85 / 缩略图≤600 q0.80）→ /api/upload → R2。
+// 封面走 crop.js 里的固定几何：比例锁死 4:5，出片上限 1120×1400 —— 和首页卡片图框一比一对上。
+
+import { COVER, coverOutput, toExactSize } from './crop.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -106,6 +109,7 @@ function statCard(lbl, num, cls = '', pct = 0, max) {
 
 // —— 裁剪 → WebP ——
 const canvasToBlob = (canvas, type, q) => new Promise(res => canvas.toBlob(res, type, q));
+
 async function cropToBlobs(cropper) {
   const main = cropper.getCroppedCanvas({ maxWidth: 2000, maxHeight: 2000, imageSmoothingQuality: 'high' });
   const thumb = cropper.getCroppedCanvas({ maxWidth: 600, maxHeight: 600, imageSmoothingQuality: 'high' });
@@ -115,25 +119,70 @@ async function cropToBlobs(cropper) {
   return { image, thumbnail, w: main.width, h: main.height };
 }
 async function cropToCover(cropper) {
-  const c = cropper.getCroppedCanvas({ maxWidth: 1400, maxHeight: 1400, imageSmoothingQuality: 'high' });
-  const image = await canvasToBlob(c, 'image/webp', 0.85);
+  const c = cropper.getCroppedCanvas({ maxWidth: COVER.width, maxHeight: COVER.height, imageSmoothingQuality: 'high' });
+  const size = coverOutput(c.width, c.height);
+  const exact = toExactSize(c, size.width, size.height);
+  const image = await canvasToBlob(exact, 'image/webp', 0.85);
   if (!image) throw new Error('当前浏览器不支持 WebP 导出');
-  return { image, w: c.width, h: c.height };
+  return { image, w: exact.width, h: exact.height };
 }
+
+// photo：作品要喂首页等高图片墙和画廊，比例随片子的横竖走，所以给一排参考比例让操作者自己挑。
+// cover：首页卡片框写死 4:5，比例就锁死不放开，出片尺寸上限 1120×1400。
+const CROP_MODES = {
+  photo: {
+    title: '裁剪 · 统一比例',
+    aspect: 1.5,
+    ratios: [['自由', ''], ['3:2', 1.5], ['16:9', 16 / 9], ['4:3', 4 / 3], ['1:1', 1], ['3:4', 0.75], ['2:3', 2 / 3]],
+    initialRatio: 1.5,
+    autoCropArea: 0.9,
+    note: '',
+  },
+  cover: {
+    title: `裁剪封面 · 锁定 4:5（最大 ${COVER.width}×${COVER.height}）`,
+    aspect: COVER.ratio,
+    ratios: [],
+    autoCropArea: 1,
+    note: `首页卡片是 4:5 竖框，比例已锁定：横图会自动居中裁掉左右两侧，拖动选框可换留哪一块。`,
+  },
+};
+
 function openCropper(file, mode, onDone) {
+  const cfg = CROP_MODES[mode] || CROP_MODES.photo;
   const url = URL.createObjectURL(file);
   const back = el('div', 'modal-back');
   back.innerHTML = `<div class="modal">
-    <div class="modal-head"><b>裁剪 · 统一比例</b><button class="close-x" data-close>×</button></div>
+    <div class="modal-head"><b>${esc(cfg.title)}</b><button class="close-x" data-close>×</button></div>
     <div class="modal-body">
-      <div class="ratio-bar" id="ratios">${[['自由', ''], ['3:2', 1.5], ['16:9', 16 / 9], ['4:3', 4 / 3], ['1:1', 1], ['3:4', 0.75], ['2:3', 2 / 3]].map(([l, r], i) => `<button type="button" class="chip${i === 1 ? ' active' : ''}" data-ratio="${r}">${l}</button>`).join('')}</div>
+      ${cfg.ratios.length ? `<div class="ratio-bar" id="ratios">${cfg.ratios.map(([l, r], i) => `<button type="button" class="chip${r === cfg.initialRatio ? ' active' : ''}" data-ratio="${r}">${l}</button>`).join('')}</div>` : ''}
       <div class="cropper-host"><img id="crop-img" src="${url}" alt=""></div>
+      ${cfg.note ? `<p class="crop-note" id="crop-note">${esc(cfg.note)}</p>` : ''}
     </div>
     <div class="modal-foot"><button class="btn" data-close>取消</button><button class="btn btn-primary" data-ok>确认裁剪</button></div>
   </div>`;
   document.body.append(back);
-  const cropper = new Cropper($('#crop-img', back), { viewMode: 1, aspectRatio: 1.5, autoCropArea: 0.9 });
-  $('#ratios', back).addEventListener('click', e => {
+  const note = $('#crop-note', back);
+  const cropper = new Cropper($('#crop-img', back), {
+    viewMode: 1, aspectRatio: cfg.aspect, autoCropArea: cfg.autoCropArea,
+    ...(mode === 'cover' ? { dragMode: 'move' } : {}),
+  });
+  // 封面：提示本次出片尺寸。原图裁切范围不足 1120×1400 时不硬放大，说清楚为什么变小了。
+  if (mode === 'cover') {
+    const warn = () => {
+      const d = cropper.getData(true);
+      const s = coverOutput(d.width, d.height);
+      note.textContent = s.tooSmall
+        ? `裁切范围 ${Math.round(d.width)}×${Math.round(d.height)} 不到 ${COVER.width} 宽，按比例出片 ${s.width}×${s.height}（不做放大，想要更清晰请换更大的竖图）。`
+        : `裁切范围 ${Math.round(d.width)}×${Math.round(d.height)} → 出片 ${s.width}×${s.height}，比例锁定 4:5。`;
+      note.classList.toggle('warn', s.tooSmall);
+    };
+    cropper.on('cropmove', warn);
+    cropper.on('cropend', warn);
+    cropper.on('zoom', warn);
+    cropper.on('crop', warn);
+    cropper.on('ready', warn);
+  }
+  if ($('#ratios', back)) $('#ratios', back).addEventListener('click', e => {
     const b = e.target.closest('[data-ratio]'); if (!b) return;
     $$('#ratios .chip', back).forEach(c => c.classList.remove('active')); b.classList.add('active');
     cropper.setAspectRatio(b.dataset.ratio ? Number(b.dataset.ratio) : NaN);
@@ -353,9 +402,9 @@ function openStoryEditor(s) {
   back.innerHTML = `<div class="modal">
     <div class="modal-head"><b>${isNew ? '新建故事' : '编辑故事'}</b><button class="close-x" data-close>×</button></div>
     <div class="modal-body">
-      <div class="field"><label>封面</label>
+      <div class="field"><label>封面 <span style="font-weight:400;color:var(--admin-mute)">首页卡片是 4:5 竖框，选图后比例自动锁定，最大出片 ${COVER.width}×${COVER.height}</span></label>
         <div style="display:flex;gap:.75rem;align-items:center">
-          <img id="cover-prev" class="thumb" style="width:120px;height:80px;object-fit:cover;border-radius:6px;background:var(--admin-panel-2)" src="${s && s.cover ? esc(s.cover) : ''}" alt="">
+          <img id="cover-prev" class="thumb" style="width:88px;height:110px;object-fit:cover;border-radius:6px;background:var(--admin-panel-2)" src="${s && s.cover ? esc(s.cover) : ''}" alt="">
           <input type="file" id="cover-file" accept="image/jpeg,image/png,image/webp">
         </div></div>
       <div class="row">

@@ -114,6 +114,7 @@ qiyangtang-site/
 
 ```
 浏览器 Canvas/Cropper → WebP → POST /api/upload → R2(photos/{id}/…)
+                       （封面比例锁定 4:5，出片上限 1120×1400，见 assets/js/crop.js）
                                                    ↓
                 POST /api/photos（仅元数据）→ D1   ← _middleware 鉴权(HttpOnly cookie)
                                                    ↓
