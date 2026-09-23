@@ -142,12 +142,30 @@ img { display: block; max-width: 100%; }
 .drag-handle { cursor: grab; color: var(--admin-mute); font-size: 1.1rem; user-select: none; }
 
 /* —— 首页精选 —— */
-.panel-title { font-family: var(--font-kai, serif); font-weight: 500; font-size: 1.1rem; margin: 0 0 .5rem; color: var(--admin-gold); }
-.home-slots { display: grid; gap: .6rem; max-width: 640px; }
-.slot { display: flex; align-items: center; gap: .8rem; background: var(--admin-panel); border: 1px solid var(--admin-line); border-radius: 10px; padding: .5rem .8rem; }
-.slot img { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; }
+/* 两块清单并排：窄屏自动堆成一行。以前清单被 max-width 卡住、下面的加入行却撑满，
+   两者对不齐，右侧空掉大半页。 */
+.home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap: 1.25rem; align-items: start; }
+.home-panel { background: var(--admin-panel); border: 1px solid var(--admin-line); border-radius: 12px; padding: 1rem 1.1rem 1.1rem; }
+.home-panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
+.home-count { font-size: .82rem; color: var(--admin-mute); font-variant-numeric: tabular-nums; }
+.home-count.changed { color: var(--admin-gold); }
+.home-hint { margin: .3rem 0 .85rem; font-size: .8rem; line-height: 1.55; color: var(--admin-mute); }
+.panel-title { font-family: var(--font-kai, serif); font-weight: 500; font-size: 1.1rem; margin: 0; color: var(--admin-gold); }
+.home-slots { display: grid; gap: .5rem; }
+.slot { display: flex; align-items: center; gap: .7rem; background: var(--admin-panel-2); border: 1px solid var(--admin-line); border-radius: 10px; padding: .4rem .7rem; }
+.slot img { width: 46px; height: 46px; object-fit: cover; border-radius: 6px; }
 .slot.over { outline: 2px dashed var(--admin-gold); }
 .slot-no { width: 1.6em; text-align: right; color: var(--admin-mute); font-size: .82rem; font-variant-numeric: tabular-nums; }
+.panel-add { display: flex; gap: .6rem; align-items: center; margin-top: .7rem; }
+.panel-add .select { flex: 1; min-width: 0; }
+.panel-add .btn { flex: none; }
+.home-tip { margin: .95rem 0 0; padding: .6rem .8rem; display: grid; gap: .2rem; border-left: 2px solid var(--admin-gold); background: var(--admin-panel-2); border-radius: 0 8px 8px 0; font-size: .78rem; line-height: 1.6; color: var(--admin-mute); }
+.home-tip li { list-style: none; }
+.home-panel .empty { padding: 1.5rem .5rem; font-size: .85rem; }
+
+/* 有未保存改动时按钮才可用，并描一圈金边 + 计数，避免「改完没点保存」 */
+.btn-primary.dirty { box-shadow: 0 0 0 2px var(--admin-gold); }
+.save-n { background: rgba(0,0,0,.28); border-radius: 999px; padding: 0 .5rem; font-size: .78rem; font-variant-numeric: tabular-nums; }
 
 /* —— Modal —— */
 .modal-back { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: grid; place-items: center; padding: 1.5rem; z-index: 50; }

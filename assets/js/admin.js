@@ -451,31 +451,77 @@ function openStoryEditor(s) {
 let HOME = [];
 let HOME_PHOTOS = [];
 let HOME_STORY_POOL = [];
+// 上限和 functions/api/home.js 的 MAX_STORY_SLOTS / MAX_PHOTO_SLOTS 必须一致（tests/admin-home.test.mjs 卡住）
+const MAX_HOME_STORIES = 20;
+// 保存顺序时的基线：改动数量拿它和当前 id 序列比，所以「挪了一张但没加减」也算一处。
+let HOME_SAVED = { photos: [], stories: [] };
+
+const idList = list => list.map(x => x.id);
+function changeCount(saved, current) {
+  const had = new Set(saved), has = new Set(current);
+  const added = current.filter(id => !had.has(id)).length;
+  const removed = saved.filter(id => !has.has(id)).length;
+  const reordered = (!added && !removed && current.join('|') !== saved.join('|')) ? 1 : 0;
+  return added + removed + reordered;
+}
+// 面板计数、按钮可用态、金边 + 计数，一次算清；每次改动后都调它。
+function syncHomeState() {
+  const btn = $('#home-save');
+  if (!btn) return;
+  const dPhotos = changeCount(HOME_SAVED.photos, idList(HOME_PHOTOS));
+  const dStories = changeCount(HOME_SAVED.stories, idList(HOME));
+  const head = (sel, changed, n, max) => {
+    const e = $(sel);
+    if (e) { e.textContent = `${n} / ${max}`; e.classList.toggle('changed', changed > 0); }
+  };
+  head('#photo-count', dPhotos, HOME_PHOTOS.length, MAX_HOME_PHOTOS);
+  head('#story-count', dStories, HOME.length, MAX_HOME_STORIES);
+  const total = dPhotos + dStories;
+  btn.disabled = !total;
+  btn.classList.toggle('btn-primary', total > 0);
+  btn.classList.toggle('dirty', total > 0);
+  btn.innerHTML = total ? `保存顺序 <span class="save-n">${total}</span>` : '保存顺序';
+}
+
 async function renderHomepage() {
   const [{ stories: cur, photos: curPhotos }, { items: allStories }, { items: allPhotos }] = await Promise.all([
     api.get('/api/home'), api.get('/api/stories?limit=200'), api.get('/api/photos?limit=500'),
   ]);
   HOME = cur.slice();
   HOME_PHOTOS = curPhotos.slice();
+  HOME_SAVED = { photos: idList(HOME_PHOTOS), stories: idList(HOME) };
   PHOTOS = allPhotos;
   const pubStories = allStories.filter(s => s.is_published);
   HOME_STORY_POOL = pubStories;
-  $('#view').innerHTML = `<div class="page-head"><h2>首页精选</h2><button class="btn btn-primary" id="home-save">保存顺序</button></div>
-
-    <h3 class="panel-title">精选作品（图片）</h3>
-    <p class="empty" style="text-align:left;padding:0 0 1rem">首页「精选作品」一栏按下面的顺序显示，最多 ${MAX_HOME_PHOTOS} 张。也可以直接去「作品管理」点某张图的「设为首页」。</p>
-    <div class="home-slots" id="photo-slots"></div>
-    <div class="row" style="margin:.75rem 0 2rem;align-items:flex-end">
-      <div class="field" style="flex:1"><label>添加已发布作品</label><select class="select" id="photo-add"></select></div>
-      <button class="btn" id="photo-add-btn">＋ 加入</button>
-    </div>
-
-    <h3 class="panel-title">客片故事</h3>
-    <p class="empty" style="text-align:left;padding:0 0 1rem">拖拽调整顺序，首页「客片故事」区块将按此顺序显示。</p>
-    <div class="home-slots" id="slots"></div>
-    <div class="row" style="margin-top:.75rem;align-items:flex-end">
-      <div class="field" style="flex:1"><label>添加已发布故事</label><select class="select" id="home-add"><option value="">选择要加入首页的故事…</option>${pubStories.filter(s => !HOME.some(h => h.id === s.id)).map(s => `<option value="${s.id}">${esc(s.title)}</option>`).join('')}</select></div>
-      <button class="btn" id="home-add-btn">＋ 加入</button>
+  $('#view').innerHTML = `<div class="page-head"><h2>首页精选</h2><button class="btn" id="home-save" disabled>保存顺序</button></div>
+    <div class="home-grid">
+      <section class="home-panel">
+        <div class="home-panel-head"><h3 class="panel-title">精选作品</h3><span class="home-count" id="photo-count"></span></div>
+        <p class="home-hint">首页「精选作品」按下面的顺序显示，拖拽可调顺序。也可以去「作品管理」点某张图的「设为首页」。</p>
+        <div class="home-slots" id="photo-slots"></div>
+        <div class="panel-add">
+          <select class="select" id="photo-add" aria-label="添加已发布作品"></select>
+          <button class="btn" id="photo-add-btn">＋ 加入</button>
+        </div>
+        <ul class="home-tip">
+          <li>首页图片墙每行最多 4 张（窄屏 2–3 张），末行会自动拉匀。</li>
+          <li>只有「已发布」的作品能加入。</li>
+        </ul>
+      </section>
+      <section class="home-panel">
+        <div class="home-panel-head"><h3 class="panel-title">客片故事</h3><span class="home-count" id="story-count"></span></div>
+        <p class="home-hint">首页「客片故事」区块按下面的顺序显示，只列出已发布的故事。</p>
+        <div class="home-slots" id="slots"></div>
+        <div class="panel-add">
+          <select class="select" id="home-add" aria-label="添加已发布故事"><option value="">选择要加入首页的故事…</option>${pubStories.filter(s => !HOME.some(h => h.id === s.id)).map(s => `<option value="${s.id}">${esc(s.title)}</option>`).join('')}</select>
+          <button class="btn" id="home-add-btn">＋ 加入</button>
+        </div>
+        <ul class="home-tip">
+          <li>首页每行 3 张卡片，超出的自动往后排。</li>
+          <li>卡片图框是 4:5 竖幅，横封面会被裁掉左右两侧 —— 上传封面时后台已锁定该比例。</li>
+          <li>改完记得点右上角「保存顺序」。</li>
+        </ul>
+      </section>
     </div>`;
   drawSlots();
   drawPhotoSlots();
@@ -489,16 +535,28 @@ async function renderHomepage() {
   };
   $('#home-add-btn').onclick = () => {
     const sel = $('#home-add'); const sid = sel.value; if (!sid) return;
+    if (HOME.length >= MAX_HOME_STORIES) { toast(`首页最多 ${MAX_HOME_STORIES} 个故事`, true); return; }
     const story = pubStories.find(s => s.id === sid);
     if (story && !HOME.some(h => h.id === sid)) { HOME.push(story); drawSlots(); }
   };
   $('#home-save').onclick = async () => {
     const btn = $('#home-save'); btn.disabled = true;
-    try { await api.put('/api/home', { story_ids: HOME.map(s => s.id), photo_ids: HOME_PHOTOS.map(p => p.id) }); toast('首页精选已更新'); }
+    try {
+      await api.put('/api/home', { story_ids: idList(HOME), photo_ids: idList(HOME_PHOTOS) });
+      HOME_SAVED = { photos: idList(HOME_PHOTOS), stories: idList(HOME) };
+      toast('首页精选已更新');
+    }
     catch (e) { toast(e.message, true); }
-    finally { btn.disabled = false; }
+    finally { syncHomeState(); }
   };
 }
+// 改完没点保存就刷新/关页，问一句 —— 真的出现过「裁完封面没保存，前台还是旧图」。
+addEventListener('beforeunload', e => {
+  const btn = $('#home-save');
+  if (location.hash.replace('#', '') !== 'homepage' || !btn || btn.disabled) return;
+  e.preventDefault();
+  e.returnValue = '';
+});
 function photoPoolOptions() {
   const pool = PHOTOS.filter(p => p.is_published && !HOME_PHOTOS.some(h => h.id === p.id));
   const groups = Object.entries(CATS).map(([cat, label]) => {
@@ -512,6 +570,7 @@ function drawPhotoSlots() {
   const sel = $('#photo-add');
   if (sel) sel.innerHTML = photoPoolOptions();
   if (!box) return;
+  syncHomeState();
   if (!HOME_PHOTOS.length) { box.innerHTML = '<p class="empty">尚未选择首页作品，首页会显示内置的 3 张代表作。</p>'; return; }
   box.innerHTML = HOME_PHOTOS.map((p, i) => `<div class="slot" draggable="true" data-id="${p.id}">
     <span class="drag-handle" title="拖拽排序">⠿</span>
@@ -520,7 +579,7 @@ function drawPhotoSlots() {
     <div style="flex:1"><div>${esc(p.title)}</div><div style="font-size:.78rem;color:var(--admin-mute)">${esc(CATS[p.category] || p.category)}${p.subcategory ? ' · ' + esc(p.subcategory) : ''}</div></div>
     <button class="btn btn-sm" data-rm="${p.id}">移除</button></div>`).join('');
   $$('#photo-slots [data-rm]', box).forEach(b => b.onclick = () => { HOME_PHOTOS = HOME_PHOTOS.filter(p => p.id !== b.dataset.rm); drawPhotoSlots(); });
-  wireDrag(box, order => { HOME_PHOTOS = order.map(id => HOME_PHOTOS.find(p => p.id === id)).filter(Boolean); });
+  wireDrag(box, order => { HOME_PHOTOS = order.map(id => HOME_PHOTOS.find(p => p.id === id)).filter(Boolean); syncHomeState(); });
 }
 function drawSlots() {
   const box = $('#slots');
@@ -528,7 +587,8 @@ function drawSlots() {
   if (sel) sel.innerHTML = `<option value="">选择要加入首页的故事…</option>` +
     HOME_STORY_POOL.filter(s => !HOME.some(h => h.id === s.id)).map(s => `<option value="${s.id}">${esc(s.title)}</option>`).join('');
   if (!box) return;
-  if (!HOME.length) { box.innerHTML = '<p class="empty">尚未选择首页故事。</p>'; return; }
+  syncHomeState();
+  if (!HOME.length) { box.innerHTML = '<p class="empty">尚未选择首页故事，首页会显示写死的示例卡片。</p>'; return; }
   box.innerHTML = HOME.map((s, i) => `<div class="slot" draggable="true" data-id="${s.id}">
     <span class="drag-handle" title="拖拽排序">⠿</span>
     <span class="slot-no">${i + 1}</span>
@@ -536,7 +596,7 @@ function drawSlots() {
     <div style="flex:1"><div>${esc(s.title)}</div><div style="font-size:.78rem;color:var(--admin-mute)">${esc(CATS[s.category] || s.category)}</div></div>
     <button class="btn btn-sm" data-rm="${s.id}">移除</button></div>`).join('');
   $$('#slots [data-rm]', box).forEach(b => b.onclick = () => { HOME = HOME.filter(s => s.id !== b.dataset.rm); drawSlots(); });
-  wireDrag(box, order => { HOME = order.map(id => HOME.find(s => s.id === id)).filter(Boolean); });
+  wireDrag(box, order => { HOME = order.map(id => HOME.find(s => s.id === id)).filter(Boolean); syncHomeState(); });
 }
 function wireDrag(box, commit) {
   let dragEl = null;
