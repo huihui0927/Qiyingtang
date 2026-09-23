@@ -7,9 +7,16 @@ const homeCss = readFileSync(new URL('../assets/css/home.css', import.meta.url),
 const adminJs = readFileSync(new URL('../assets/js/admin.js', import.meta.url), 'utf8');
 
 describe('封面几何与首页卡片框一致', () => {
-  it('home.css 里 .story-card-media img 是 4:5', () => {
-    const block = homeCss.slice(homeCss.indexOf('.story-card-media img'), homeCss.indexOf('.story-card:hover'));
-    expect(block).toMatch(/aspect-ratio:\s*4\s*\/\s*5/);
+  it('home.css 的 4:5 框在容器上，不在 <img> 上', () => {
+    const containerAt = homeCss.indexOf('.story-card-media {');
+    const imgAt = homeCss.indexOf('.story-card-media img');
+    const afterAt = homeCss.indexOf('.story-card-media::after');
+    expect(containerAt, '找不到 .story-card-media 规则').toBeGreaterThan(-1);
+    expect(imgAt, '找不到 .story-card-media img 规则').toBeGreaterThan(containerAt);
+    expect(afterAt, '找不到 .story-card-media::after 规则').toBeGreaterThan(imgAt);
+    expect(homeCss.slice(containerAt, imgAt)).toMatch(/aspect-ratio:\s*4\s*\/\s*5/);
+    // 框子写在 <img> 上时，浏览器会拿原图固有尺寸参与算高，横竖混排的封面就会把卡片撑得高低不一
+    expect(homeCss.slice(imgAt, afterAt)).not.toMatch(/aspect-ratio/);
   });
   it('COVER 常量与之一致', () => {
     expect(COVER.ratio).toBeCloseTo(4 / 5, 10);

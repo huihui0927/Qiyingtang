@@ -291,45 +291,133 @@
   transform: rotate(-4deg); /* 手盖的章，不该是排出来的 */
 }
 
-/* ── Client stories: 三列客片卡 ────────────────────────── */
-.story-cards {
-  display: grid; gap: var(--space-4);
-  grid-template-columns: 1fr;
+/* ── Client stories: 扇形客片画廊 ─────────────────────────
+   脚本没跑起来时 .story-cards 是一条能横滑的轨道（图的下面照样有字，能点能读）；
+   home.js 接管后给 .story-gallery 写 data-gallery="on"，卡片改成绝对定位，
+   位置由每帧的 --x / --y / --rot / --s 决定（弧线 = 每档倾斜 + 二次下沉）。 */
+.story-gallery {
+  --card-w: 232px;
+  --card-gap: 26px;
+  --slot-h: 158px;   /* 图下方固定文字区：窄屏不排元信息，标题 1 行 + 简介 2 行 + 链接 */
+  --tilt: 9deg;      /* 相邻一档的倾斜角 */
+  --sink: 16px;      /* 相邻一档的二次下沉量，越大弧线越弯 */
+  position: relative;
 }
 @media (min-width: 640px) {
-  .story-cards { grid-template-columns: repeat(2, 1fr); }
+  .story-gallery { --card-w: 268px; --card-gap: 34px; --slot-h: 176px; }
 }
 @media (min-width: 1024px) {
-  .story-cards { grid-template-columns: repeat(3, 1fr); gap: var(--space-5); }
+  .story-gallery { --card-w: 320px; --card-gap: 40px; --slot-h: 176px; --tilt: 7deg; --sink: 22px; }
 }
-.story-card { position: relative; }
-.story-card-media { overflow: hidden; border-radius: 2px; }
-.story-card-media img {
-  width: 100%;
+
+.story-viewport {
+  overflow: hidden;                 /* 只裁左右，让两侧卡干净地切在版心边上 */
+  padding-block: var(--space-3) calc(var(--space-3) + 26px); /* 上下留出弧线下沉的余量 */
+  touch-action: pan-y;              /* 竖向滚交给页面，横向归画廊 */
+}
+[data-gallery="on"] .story-viewport { cursor: grab; user-select: none; }
+[data-gallery="on"] .story-viewport:active { cursor: grabbing; }
+.story-gallery:focus-visible { outline: 2px solid var(--gold); outline-offset: 8px; }
+
+/* 未接管：横向轨道 */
+.story-cards {
+  display: flex; gap: var(--card-gap);
+  overflow-x: auto; scroll-snap-type: x proximity;
+  padding-block-end: var(--space-3);
+  scrollbar-width: none;
+}
+.story-cards::-webkit-scrollbar { display: none; }
+.story-cards > .story-card { flex: 0 0 var(--card-w); scroll-snap-align: center; }
+
+/* 接管后：轨道不再滚动，卡片按弧线摆位 */
+[data-gallery="on"] .story-cards {
+  position: relative;   /* 卡片的 left: 50% / top: 0 要落在这条轨道上，不是整块画廊 */
+  display: block; overflow: visible; padding: 0; scrollbar-width: none;
+  height: calc(var(--card-w) * 1.25 + var(--slot-h)); /* 4:5 图 + 文字区 */
+}
+[data-gallery="on"] .story-card {
+  position: absolute; left: 50%; top: 0; width: var(--card-w);
+  transform: translate(calc(-50% + var(--x, 0px)), var(--y, 0px)) rotate(var(--rot, 0deg)) scale(var(--s, 1));
+  z-index: var(--z, 1);
+}
+
+.story-card {
+  position: relative;
+  display: flex; flex-direction: column;
+  color: inherit; text-decoration: none;   /* 整张卡是 <a>，别染成链接蓝 */
+  background: var(--paper-warm);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(31, 27, 22, .05), 0 10px 24px -14px rgba(31, 27, 22, .26);
+  transition: box-shadow .35s ease;
+}
+.story-card.is-active {
+  box-shadow: 0 2px 4px rgba(31, 27, 22, .06), 0 22px 46px -18px rgba(31, 27, 22, .38);
+}
+/* 框子钉在容器上而不是 <img> 上：这样卡片多高只由 CSS 决定，
+   跟封面原图是横是竖、加载完没加载完、浏览器怎么理解 img 上的 aspect-ratio 都无关。 */
+.story-card-media {
+  position: relative;
   aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #E4DBC8;             /* 图没到位时是暖色占位，不闪白块 */
+}
+.story-card-media img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
   object-fit: cover;
   transition: transform .7s ease;
 }
-.story-card:hover .story-card-media img { transform: scale(1.04); }
-/* 简介行有/无、标题折行都会撑高文字块；用 flex 把链接钉到卡底，三张的底线才不会被后台数据拉歪 */
-.story-card-body {
-  padding-top: var(--space-3);
-  display: flex;
-  flex-direction: column;
+.story-card.is-active:hover .story-card-media img { transform: scale(1.04); }
+/* 压图日期要始终可读，图底部补一层极淡的暗部（渐变收尾要软，否则图上出现一条横线） */
+.story-card-media::after {
+  content: ""; position: absolute; inset: auto 0 0 0; height: 30%;
+  background: linear-gradient(to top, rgba(31, 27, 22, .42), rgba(31, 27, 22, .16) 45%, transparent);
+  pointer-events: none;
 }
+/* 文字区必须是块容器：flex 项的 display 会被 blockify，
+   里面的 display:-webkit-box 会变成 flow-root，行末省略（line-clamp）静默失效。
+   平时整条压成 0 高——只有转到正中间才把标题/简介撑开，
+   两侧的卡就是一张干净的 4:5 相片，不会拖一条空白色带。
+   min-height: 0 是给 flex 列容器里的它用的，否则自动最小尺寸会把它顶回内容高。 */
+.story-card-body {
+  flex: 0 0 auto; min-height: 0; height: 0;
+  position: relative;
+  padding: 0 var(--space-3);
+  display: block;
+  transition: height .45s ease, padding .45s ease;
+}
+.story-card.is-active .story-card-body {
+  height: var(--slot-h);
+  padding: var(--space-3) var(--space-3) 0;
+}
+/* 描边日期挪到图片右下角当压图印记；它在 DOM 里仍属于文字区，语义不变 */
 .story-card .issue {
+  position: absolute; right: var(--space-3);
+  bottom: calc(var(--slot-h) + .5rem);
   font-family: var(--font-en);
-  font-size: clamp(1.75rem, 2.6vw, 2.4rem);
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: 1px var(--gold);
-  display: block;
-  margin-bottom: var(--space-2);
+  text-shadow: 0 1px 12px rgba(31, 27, 22, .35);
+  pointer-events: none;
 }
+/* 只有正中间那张展开标题与简介；描边日期每张都留着，它是两侧卡唯一的文字。
+   用 opacity 而不是 visibility，两侧的链接仍可被 Tab 聚焦，聚焦时画廊会把它转到中间。 */
+.story-card-body > :not(.issue) { opacity: 0; transition: opacity .4s ease; }
+.story-card.is-active .story-card-body > :not(.issue) { opacity: 1; }
+.story-card.is-active :is(.meta, .lede) { transition-delay: .1s; }
+.story-card.is-active .view-story { transition-delay: .18s; }
 .story-card h3 {
-  font-size: var(--fs-xl);
+  font-size: var(--fs-lg);
   letter-spacing: .06em;
-  margin-bottom: var(--space-2);
+  line-height: 1.4;
+  margin-bottom: .3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .story-card h3 .x {
   font-family: var(--font-en);
@@ -339,18 +427,21 @@
 }
 .story-card .meta {
   font-size: var(--fs-xs);
-  letter-spacing: .18em;
+  letter-spacing: .16em;
   color: var(--ink-mute);
-  margin-bottom: var(--space-2);
+  line-height: 1.4;
+  margin-bottom: .35rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-/* 后台简介长短不一，统一锁两行 */
+/* 后台简介长短不一，统一占两行：链接在卡片里的位置才是固定的 */
 .story-card .lede {
   font-family: var(--font-kai);
   font-size: var(--fs-sm);
   color: var(--ink-soft);
-  line-height: var(--lh-base);
-  margin-bottom: var(--space-3);
-  min-height: calc(2em * var(--lh-base));
+  line-height: 1.6;
+  height: 3.2em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -363,12 +454,27 @@
   font-size: var(--fs-xs);
   border-bottom: 1px solid var(--ink);
   padding-bottom: 3px;
-  margin-top: auto;
-  align-self: flex-start; /* 否则 flex 项会拉满整行，下划线变成通栏 */
+  display: table; /* 收缩成内容宽，下划线不会变成通栏 */
 }
-.story-card:hover .view-story { border-color: var(--seal); }
-/* 整卡都是点击热区：伪元素铺满 .story-card（最近的定位祖先），链接仍只占一个键盘焦点 */
-.story-card .view-story::after { content: ''; position: absolute; inset: 0; }
+.story-card.is-active:hover .view-story { border-color: var(--seal); }
+/* 窄屏一行元信息要占掉 25px，卡底就只剩简介一行半了；手机上先舍它 */
+@media (max-width: 639px) { .story-card .meta { display: none; } }
+
+
+.story-hint {
+  margin-top: var(--space-2);
+  text-align: center;
+  font-size: var(--fs-xs);
+  letter-spacing: .22em;
+  color: var(--ink-mute);
+}
+[data-gallery] .story-hint { opacity: .75; }
+@media (min-width: 1024px) and (hover: none) {
+  .story-hint kbd { display: none; }   /* 触屏没有键盘，别写 ← → */
+}
+@media (prefers-reduced-motion: reduce) {
+  .story-card-media img, .story-card-body, .story-card-body > * { transition: none; }
+}
 
 /* ── Closing CTA: 天地杆 ───────────────────────────────── */
 .closing-cta {

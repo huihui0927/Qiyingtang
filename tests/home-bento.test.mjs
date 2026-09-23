@@ -8,7 +8,7 @@ const STATIC_HTML = `<div class="bento" id="bento">
   <button class="bento-cell bento-lg" type="button"><img src="w-thumb.webp" data-full="w.webp" alt="婚礼纪实" width="1920" height="1280"><span class="bento-cap"><span class="cap-year">2026</span> 婚礼全天纪实</span></button>
   <button class="bento-cell bento-sm" type="button"><img src="p-thumb.webp" data-full="p.webp" alt="人像写真" width="1280" height="1920"><span class="bento-cap">人像写真</span></button>
   <button class="bento-cell bento-sm" type="button"><img src="e-thumb.webp" data-full="e.webp" alt="活动纪实" width="2000" height="1334"><span class="bento-cap">品牌活动</span></button>
-</div><div class="story-cards" id="client-stories">${['w', 'p', 'e'].map(k => `<article class="story-card"><div class="story-card-media"><img src="${k}-thumb.webp" alt="${k}"></div><div class="story-card-body"><span class="issue">2025.01</span><h3>静态兜底</h3><a class="view-story" href="index.html">View Story</a></div></article>`).join('')}</div>`;
+</div><div class="story-cards" id="client-stories">${['w', 'p', 'e'].map(k => `<a class="story-card" href="${k}.html"><div class="story-card-media"><img src="${k}-thumb.webp" alt="${k}"></div><div class="story-card-body"><span class="issue">2025.01</span><h3>静态兜底</h3><span class="view-story">View Story</span></div></a>`).join('')}</div>`;
 
 function apiResponse(data) {
   globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => data });
@@ -124,8 +124,7 @@ describe('客片故事卡', () => {
 
     const cards = [...document.querySelectorAll('#client-stories .story-card')];
     expect(cards).toHaveLength(3);
-    expect(cards.map(c => c.querySelector('.view-story').getAttribute('href')))
-      .toEqual(['wedding.html', 'portrait.html', 'event.html']);
+    expect(cards.map(c => c.getAttribute('href'))).toEqual(['wedding.html', 'portrait.html', 'event.html']);
     expect(cards[0].querySelector('.issue').textContent).toBe('2025.01');
     expect(cards[0].querySelector('.meta').textContent).toBe('全天纪实 · 北京');
     expect(cards[0].querySelector('img').getAttribute('src')).toContain('cover.webp');
