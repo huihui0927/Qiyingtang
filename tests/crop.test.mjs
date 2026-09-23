@@ -4,6 +4,7 @@ import { COVER, centerRect, coverOutput } from '../assets/js/crop.js';
 
 // 前端卡片框和后台出片必须同比例：这一条守住「改了一个忘了另一个」的漂移。
 const homeCss = readFileSync(new URL('../assets/css/home.css', import.meta.url), 'utf8');
+const adminJs = readFileSync(new URL('../assets/js/admin.js', import.meta.url), 'utf8');
 
 describe('封面几何与首页卡片框一致', () => {
   it('home.css 里 .story-card-media img 是 4:5', () => {
@@ -70,5 +71,18 @@ describe('coverOutput', () => {
       expect(r.height).toBeLessThanOrEqual(COVER.height);
       expect(r.width / r.height).toBeCloseTo(COVER.ratio, 2);
     }
+  });
+});
+
+// Cropper.js 1.2.2 的实例上没有 .on()：事件全部派发在 <img> 元素上。
+// 写成 cropper.on(...) 会在 openCropper 中途抛 TypeError，弹窗的「确认裁剪」监听器根本没绑上。
+describe('裁剪弹窗的事件绑定', () => {
+  it('绝不调用 cropper.on', () => {
+    expect(adminJs).not.toMatch(/cropper\.on\(/);
+  });
+  it('监听器绑在传给 new Cropper 的同一个元素上', () => {
+    const target = adminJs.match(/new Cropper\((\w+),/);
+    expect(target).not.toBeNull();
+    expect(adminJs).toMatch(new RegExp(`\\.forEach\\(ev => ${target[1]}\\.addEventListener\\(ev,`));
   });
 });

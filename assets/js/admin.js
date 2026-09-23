@@ -162,7 +162,8 @@ function openCropper(file, mode, onDone) {
   </div>`;
   document.body.append(back);
   const note = $('#crop-note', back);
-  const cropper = new Cropper($('#crop-img', back), {
+  const img = $('#crop-img', back);
+  const cropper = new Cropper(img, {
     viewMode: 1, aspectRatio: cfg.aspect, autoCropArea: cfg.autoCropArea,
     ...(mode === 'cover' ? { dragMode: 'move' } : {}),
   });
@@ -176,11 +177,8 @@ function openCropper(file, mode, onDone) {
         : `裁切范围 ${Math.round(d.width)}×${Math.round(d.height)} → 出片 ${s.width}×${s.height}，比例锁定 4:5。`;
       note.classList.toggle('warn', s.tooSmall);
     };
-    cropper.on('cropmove', warn);
-    cropper.on('cropend', warn);
-    cropper.on('zoom', warn);
-    cropper.on('crop', warn);
-    cropper.on('ready', warn);
+    // Cropper.js 1.2.2 没有实例上的 .on()：所有事件都派发在 <img> 元素上。
+    ['cropmove', 'cropend', 'crop', 'zoom', 'ready'].forEach(ev => img.addEventListener(ev, warn));
   }
   if ($('#ratios', back)) $('#ratios', back).addEventListener('click', e => {
     const b = e.target.closest('[data-ratio]'); if (!b) return;
