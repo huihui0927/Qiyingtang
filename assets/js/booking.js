@@ -22,6 +22,27 @@ export function initBooking(form, { endpoint = '/api/contact' } = {}) {
     status.hidden = false;
   }
 
+  // 服务端把失败原因写在响应体里（misconfigured / upstream / origin / invalid / internal）。
+  // 以前非 2xx 一律只报「HTTP 500」，把原因整个丢掉了 —— 这个表单故障因此始终无法定位。
+  const FALLBACK = '，请稍后重试，或直接致电 152 1047 5723。';
+  const FAIL_TEXT = {
+    misconfigured: '服务端通知渠道未配置',
+    upstream: '通知渠道暂时不可达',
+    origin: '请从本站页面重新提交',
+    internal: '服务端处理异常',
+    'bad-json': '提交内容格式有误',
+  };
+  function failMessage(res, data) {
+    const code = data && data.error;
+    if (code === 'invalid' && data.errors) {
+      for (const [k, v] of Object.entries(data.errors)) setError(k, v);
+      return '请检查表单中标红的字段。';
+    }
+    // 括号里保留原始错误码：报障时一句话就能定位，不用再猜是哪种故障。
+    const label = FAIL_TEXT[code] || '提交失败';
+    return `${label}（${code || 'HTTP ' + res.status}）${FALLBACK}`;
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     clearErrors();
@@ -37,21 +58,24 @@ export function initBooking(form, { endpoint = '/api/contact' } = {}) {
     }
     submit.disabled = true;
     setStatus('pending', '提交中…');
+    let res;
     try {
-      const res = await fetch(endpoint, {
+      res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(r.value),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json().catch(() => ({}));
-      if (data.ok === false) throw new Error(data.error || '提交失败');
+    } catch {
+      setStatus('error', `网络不通，提交失败（network）${FALLBACK}`);
+      submit.disabled = false;
+      return;
+    }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false) setStatus('error', failMessage(res, data));
+    else {
       form.reset();
       setStatus('success', '已收到您的预约，我们会在 1 个工作日内联系您。');
-    } catch (err) {
-      setStatus('error', `提交失败：${err.message}。请稍后重试，或直接致电 152 1047 5723。`);
-    } finally {
-      submit.disabled = false;
     }
+    submit.disabled = false;
   });
 }
