@@ -37,3 +37,24 @@ export function toExactSize(src, width, height) {
   ctx.drawImage(src, r.x, r.y, r.w, r.h, 0, 0, width, height);
   return out;
 }
+
+// 设计软件导出的 PNG/WebP 常自带一圈透明边：裁剪框锁的是比例，空边会原样进封面，
+// 前台卡片里照片就只剩一条。这里算出「有内容的最小矩形」，进裁剪器之前先把空边吃掉。
+// alpha 是每像素一个字节（RGBA 里的 A 通道）；threshold 容忍压缩带来的边缘噪点。
+// 全透明返回 null —— 调用方据此保持原图不动。
+export function trimRect(width, height, alpha, threshold = 12) {
+  let x0 = width, y0 = height, x1 = -1, y1 = -1;
+  for (let y = 0; y < height; y++) {
+    const row = y * width;
+    for (let x = 0; x < width; x++) {
+      if (alpha[row + x] > threshold) {
+        if (x < x0) x0 = x;
+        if (x > x1) x1 = x;
+        if (y < y0) y0 = y;
+        if (y > y1) y1 = y;
+      }
+    }
+  }
+  if (x1 < 0) return null;
+  return { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+}

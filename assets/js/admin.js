@@ -2,7 +2,7 @@
 // 图片：浏览器端 Cropper.js 裁剪 → Canvas 导出 WebP（主图≤2000 q0.85 / 缩略图≤600 q0.80）→ /api/upload → R2。
 // 封面走 crop.js 里的固定几何：比例锁死 4:5，出片上限 1120×1400 —— 和首页卡片图框一比一对上。
 
-import { COVER, coverOutput, toExactSize } from './crop.js';
+import { COVER, coverOutput, toExactSize, trimRect } from './crop.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -127,6 +127,32 @@ async function cropToCover(cropper) {
   return { image, w: exact.width, h: exact.height };
 }
 
+// 设计软件导出的 PNG/WebP 常自带一圈透明边：裁剪框锁的是比例，空边会原样进封面，
+// 前台卡片里照片就只剩一条。进裁剪器之前先按「有内容的矩形」把空边吃掉。
+// 返回裁掉空边后的 Blob；没有空边、浏览器不支持、或像素读取失败都返回 null，调用方照旧用原文件。
+// 兜这一层是因为超大图 getImageData 会抛（几千万像素的内存峰值），一抛弹窗就整个打不开。
+async function trimTransparentEdges(file) {
+  try {
+    const bmp = await createImageBitmap(file);
+    const c = document.createElement('canvas');
+    c.width = bmp.width; c.height = bmp.height;
+    const ctx = c.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(bmp, 0, 0);
+    bmp.close();
+    const px = ctx.getImageData(0, 0, c.width, c.height).data;
+    const alpha = new Uint8ClampedArray(c.width * c.height);
+    for (let i = 3, j = 0; i < px.length; i += 4, j++) alpha[j] = px[i];
+    const r = trimRect(c.width, c.height, alpha);
+    if (!r || (r.w === c.width && r.h === c.height)) return null;
+    const out = document.createElement('canvas');
+    out.width = r.w; out.height = r.h;
+    out.getContext('2d').drawImage(c, r.x, r.y, r.w, r.h, 0, 0, r.w, r.h);
+    return await canvasToBlob(out, 'image/png');
+  } catch {
+    return null;
+  }
+}
+
 // photo：作品要喂首页等高图片墙和画廊，比例随片子的横竖走，所以给一排参考比例让操作者自己挑。
 // cover：首页卡片框写死 4:5，比例就锁死不放开，出片尺寸上限 1120×1400。
 const CROP_MODES = {
@@ -147,9 +173,10 @@ const CROP_MODES = {
   },
 };
 
-function openCropper(file, mode, onDone) {
+async function openCropper(file, mode, onDone) {
   const cfg = CROP_MODES[mode] || CROP_MODES.photo;
-  const url = URL.createObjectURL(file);
+  const trimmed = await trimTransparentEdges(file);
+  const url = URL.createObjectURL(trimmed || file);
   const back = el('div', 'modal-back');
   back.innerHTML = `<div class="modal">
     <div class="modal-head"><b>${esc(cfg.title)}</b><button class="close-x" data-close>×</button></div>
@@ -169,12 +196,13 @@ function openCropper(file, mode, onDone) {
   });
   // 封面：提示本次出片尺寸。原图裁切范围不足 1120×1400 时不硬放大，说清楚为什么变小了。
   if (mode === 'cover') {
+    const trimHint = trimmed ? '已自动裁掉原图四周的透明边。' : '';
     const warn = () => {
       const d = cropper.getData(true);
       const s = coverOutput(d.width, d.height);
-      note.textContent = s.tooSmall
+      note.textContent = trimHint + (s.tooSmall
         ? `裁切范围 ${Math.round(d.width)}×${Math.round(d.height)} 不到 ${COVER.width} 宽，按比例出片 ${s.width}×${s.height}（不做放大，想要更清晰请换更大的竖图）。`
-        : `裁切范围 ${Math.round(d.width)}×${Math.round(d.height)} → 出片 ${s.width}×${s.height}，比例锁定 4:5。`;
+        : `裁切范围 ${Math.round(d.width)}×${Math.round(d.height)} → 出片 ${s.width}×${s.height}，比例锁定 4:5。`);
       note.classList.toggle('warn', s.tooSmall);
     };
     // Cropper.js 1.2.2 没有实例上的 .on()：所有事件都派发在 <img> 元素上。
