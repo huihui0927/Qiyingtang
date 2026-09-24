@@ -18,7 +18,9 @@
 }
 .site-footer { margin-top: var(--space-6); padding-block: var(--space-5); border-top: 1px solid var(--line); background: var(--paper-warm); }
 .footer-inner { text-align: center; display: grid; gap: var(--space-2); }
-.footer-slogan { color: var(--ink-soft); font-size: var(--fs-lg); margin: 0; }
+/* 品牌签名句用手书，笔画细、视觉重量轻，用正文字号会显得和联系方式一行没区别；
+   抬到 --fs-xl 让页脚有个像样的收尾（390px 约 23px，一行放得下）。 */
+.footer-slogan { color: var(--ink-soft); font-size: var(--fs-xl); margin: 0; }
 .footer-contact, .footer-copy { color: var(--ink-mute); font-size: var(--fs-sm); margin: 0; }
 main { min-height: 60vh; padding-block: var(--space-5); background: radial-gradient(56rem 28rem at 50% -6rem, rgba(184, 148, 95, 0.07), transparent 70%); }
 section + section { margin-top: var(--space-6); }

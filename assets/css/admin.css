@@ -203,9 +203,12 @@ img { display: block; max-width: 100%; }
 
 @media (max-width: 720px) {
   .admin { grid-template-columns: 1fr; }
-  .sidebar { position: static; height: auto; flex-direction: row; overflow-x: auto; align-items: center; }
+  .sidebar { position: static; height: auto; flex-direction: row; overflow-x: auto; align-items: center; align-self: start; }
   .sidebar .brand { padding: 0 1rem 0 .5rem; }
   .sidebar .spacer { display: none; }
+  /* 横排后 .nav-item 的 width:100% 会让五项均分宽度，「作品管理」折成六行；
+     标签条要的是整条横滑，每项保持自己文字的宽度且不折行。 */
+  .sidebar .nav-item { flex: none; width: auto; white-space: nowrap; }
   .main { padding: 1rem; }
   .masonry { columns: 2 140px; }
 }
